@@ -1,10 +1,21 @@
 import	pandas as pd
 
-data = pd.read_csv("Sampledata_Comet_Allcolumns_updated28thAug.csv")
+df = pd.read_excel("/home/ssyazz/python/group/Scoring.xlsx", sheet_name = "b")
 
-data['Unique Lead Assignment Number'] = data.groupby(['Customer Name']).ngroup()
-
-results = data.head(20)
-
-print(data.head(25))
+def	unique_id(df):
+    df['Unique ID'] = df.groupby(['Customer Name']).ngroup()
+    
+def	new_unique_id(df):
+    sorted = df.sort_values(by = ["Unique ID", "Customer Name"])
+    sorted["Unique ID"] = sorted["Unique ID"].fillna(sorted["Unique ID"].isna().cumsum() + sorted["Unique ID"].max())
+    df = sorted
+    df = df.astype({"Unique ID" : "int"})
+    return(df)
+    
+def	main():
+    print(new_unique_id(df))
+    print(type(df.at[1, "Unique ID"]))
+    
+main()
+#results = df.head(20)
 # print(results)
