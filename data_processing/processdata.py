@@ -1,110 +1,90 @@
 import pandas as pd
 import numpy as np
+from fuzzyduplicates import clean_partial_duplicates
 
-pd.set_option('display.max_columns', 30)
-# data = pd.read_excel('../Sampledata_Comet_Allcolumns_updated28thAug.xlsx', sheet_name='Sample Records ')
-data = pd.read_excel('../Sampledata_Comet_Allcolumns_updated28thAug.xlsx', sheet_name='2test')
-data = data.dropna(axis=1, how='all')
+def main():
+	pd.set_option('display.max_columns', 30)
+	df = pd.read_excel('Sampledata_Comet_Allcolumns_updated28thAug.xlsx', sheet_name='2test')
+	df = df.dropna(axis=1, how='all')
 
-print(data)
-print("---------------------------------------------------------------------------")
+	print("\nOriginal Data---------------------------------------------------------------------------")
+	print(df)
 
-fields = data.columns.values.tolist()
-fields.remove("no")
-data = data.drop_duplicates(subset = fields)
+	df = to_lowercase(df)
 
-# converts all related fields to lowercase
-lowercaseFields = fields
-lowercaseFields.remove("Email")
-lowercaseFields.remove("Contact no")
-for field in lowercaseFields:
-	data[field] = data[field].str.lower()
+	print("\nto_lowercase---------------------------------------------------------------------------")
+	print(df)
+	
+	df = clean_partial_duplicates(df)
 
-uniqueFields = data.columns.values.tolist()
-uniqueFields.remove("no")
+	print("\nclean_partial_duplicates---------------------------------------------------------------------------")
+	print(df)
+
+	df = sort_by_name(df)
+
+	print("\nsort_by_name---------------------------------------------------------------------------")
+	print(df)
+
+	df = clean_duplicates(df)
+
+	print("\nclean_duplicates---------------------------------------------------------------------------")
+	print(df)
+
+	column = [
+		'Contact no',
+		'Email',
+		'name'
+	]
+	df = extract_column(df, column)
+
+	print("\nextract columns---------------------------------------------------------------------------")
+	print(df)
 
 
-data = data.sort_values(by = uniqueFields)
+def to_lowercase(df):
+	to_remove = [
+		"no",
+		"Email",
+		"Contact no"
+	]
+	fields = exclude_field(df, to_remove)
+	for field in fields:
+		df[field] = df[field].str.lower()
+	return (df)
 
-print(data)
-print("---------------------------------------------------------------------------")
+def sort_by_name(df):
+	to_remove = [
+			"no"
+		]
+	fields = exclude_field(df, to_remove)
+	df = df.drop_duplicates(subset = fields)
+	df = df.sort_values(by = fields)
+	return (df)
 
-data['Options'] = data.duplicated(subset=["name"]).astype(str)
-data['Options'].replace("False", np.nan, inplace=True)
+# remove and merge duplicates
+def clean_duplicates(df):
+	df['Options'] = df.duplicated(subset=["name"]).astype(str)
+	df['Options'].replace("False", np.nan, inplace=True)
 
-print(data)
-print("---------------------------------------------------------------------------")
+	df["tmp"] = df[df.columns.values.tolist()].isna().sum(1)
+	df = df.sort_values(by="tmp").drop(columns="tmp")
 
-# Second method
-data["tmp"] = data[data.columns.values.tolist()].isna().sum(1)
-data = data.sort_values(by="tmp").drop(columns="tmp")
+	df = (
+		df.groupby(["name"])
+		.apply(lambda x: x.ffill().bfill())
+		.drop_duplicates(["name"])
+	)
+	return (df)
 
-data = (
-    data.groupby(["name"])
-    .apply(lambda x: x.ffill().bfill())
-    .drop_duplicates(["name"])
-)
-
-print(data)
-print("---------------------------------------------------------------------------")
+def exclude_field(df, columns):
+	fields = df.columns.values.tolist()
+	for field in columns:
+		fields.remove(field)
+	return (fields)
 
 # Extract certain column from dataframe
+def extract_column(df, column):
+	df = df[column]
+	return (df)
 
-columns = [
-	'name',
-	'Contact no',
-	'Email'
-]
-
-df = data[columns]
-
-print(df)
-
-
-
-
-# Other methods to remove duplicates
-
-# # Zeroth method
-# uniqueFields = [
-# 	"name",
-# 	"Contact no",
-# 	"Address",
-# 	"Website"
-# ]
-
-# for field in uniqueFields:
-# 	data = data[(~data[field].duplicated()) | data[field].isna()]
-
-# # data = data.drop_duplicates(subset=["Main Phone #"], keep="first")
-# # data = data[(~data['Main Phone #'].duplicated()) | data['Main Phone #'].isna()]
-
-# --------------------------------------------------------------------------------------
-
-# # First method
-# data = data.replace('',np.nan).groupby('name', as_index=False).first().fillna('')
-
-# --------------------------------------------------------------------------------------
-
-# # Second method
-# data["tmp"] = data[data.columns.values.tolist()].isna().sum(1)
-# # data["tmp"] = data[["Contact no", "Address", "Website"]].isna().sum(1)
-# data = data.sort_values(by="tmp").drop(columns="tmp")
-
-# data = (
-#     data.groupby(["name"])
-#     .apply(lambda x: x.ffill().bfill())
-#     .drop_duplicates(["name"])
-# )
-
-# --------------------------------------------------------------------------------------
-
-# # Third method
-# f = lambda x: ','.join(dict.fromkeys(x.dropna()).keys())
-# data = data.replace('',np.nan).groupby('name', as_index=False).agg(f)
-# data = data.replace('',np.nan).groupby('Website', as_index=False).agg(f)
-# data = data.replace('',np.nan).groupby('Address', as_index=False).agg(f)
-
-# # data.to_csv("testing.csv")
-
-# --------------------------------------------------------------------------------------
+main()

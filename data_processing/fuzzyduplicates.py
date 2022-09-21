@@ -2,18 +2,26 @@ import numpy as np
 import pandas as pd
 from fuzzywuzzy import fuzz
 
-def similar(one, two, df):
-	fields = df.columns.values.tolist()
-	fields.remove("no")
-	ratio = 0
-	for field in fields:
-		ratio += fuzz.ratio(one[field], two[field])
-	ratio = ratio/len(fields)
-	# ratio = fuzz.ratio(one['name'], two['name'])
-	if (ratio > 80):
-		print(ratio, one['no'], one['name'], two['no'], two['name'],)
-	return (ratio > 80)
+def main():
+	df = pd.read_excel('Sampledata_Comet_Allcolumns_updated28thAug.xlsx', sheet_name='fuzzy')
+	df = clean_partial_duplicates(df)
+	print(df)
 
+def clean_partial_duplicates(df):
+	df['real_id'] = find_partitions(
+		df=df,
+		match_func=similar
+	)
+
+	print("\nAssign id for partial_duplicates--------------------------------------------------")
+	print(df)
+
+	df = df.replace(r'^\s+$', np.nan, regex=True)
+	df["tmp"] = df[df.columns.values.tolist()].isna().sum(1)
+	df = df.sort_values(by="tmp").drop(columns="tmp")
+	df = df.drop_duplicates(subset=["real_id"], keep="first")
+	df = df.drop(columns="real_id")
+	return (df)
 
 def find_partitions(df, match_func, max_size=None, block_by=None):
 	"""Recursive algorithm for finding duplicates in a DataFrame."""
@@ -79,26 +87,17 @@ def find_partitions(df, match_func, max_size=None, block_by=None):
 		for idx in idxs
 	})
 
+def similar(one, two, df):
+	fields = df.columns.values.tolist()
+	fields.remove("no")
+	ratio = 0
+	for field in fields:
+		ratio += fuzz.ratio(one[field], two[field])
+	ratio = ratio/len(fields)
+	# ratio = fuzz.ratio(one['name'], two['name'])
+	# if (ratio > 80):
+	# 	print(ratio, one['no'], one['name'], two['no'], two['name'],)
+	return (ratio > 80)
 
-def main():
-	data = pd.read_excel('../Sampledata_Comet_Allcolumns_updated28thAug.xlsx', sheet_name='fuzzy')
-	# print(data.dtypes)
-
-	data['real_id'] = find_partitions(
-		df=data,
-		match_func=similar
-	)
-
-	print(data)
-	print("--------------------------------------------------")
-
-	data = data.replace(r'^\s+$', np.nan, regex=True)
-	data["tmp"] = data[data.columns.values.tolist()].isna().sum(1)
-	data = data.sort_values(by="tmp").drop(columns="tmp")
-	data = data.drop_duplicates(subset=["real_id"], keep="first")
-	data = data.drop(columns="real_id")
-
-	print(data)
-	# print(data.dtypes)
-
-main()
+if __name__ == "__main__":
+	main()
