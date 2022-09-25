@@ -95,44 +95,43 @@ def negative_score(index, row, df):
 
 def scores(df):
     for index, row in df.iterrows():
-        if not pd.isna(row["Industry"]):
-            industry(index, row, df)
-        else:
-            df.at[index, "Scores"] += weight1 * 0
-        if not pd.isna(row["Last Created"]):
-            last_created(index, row, df)
-        else:
-            df.at[index, "Scores"] += weight2 * 0
-        if not pd.isna(row["Employee Count"]):
-            employee(index, row, df)
-        else:
-            df.at[index, "Scores"] += weight3 * 0
-        if not pd.isna(row["Total Potential Revenue/Month"]):
-            revenue(index, row, df)
-        else:
-            df.at[index, "Scores"] += weight4 * 0
-        if not pd.isna(row["Physical Channel"]):
-            channel(index, row, df)
-        else:
-            df.at[index, "Scores"] += weight5 * 0
-        if not pd.isna(row["Lead Source Name"]):
-            source(index, row, df)
-        else:
-            df.at[index, "Scores"] += weight6 * 0
-        if not pd.isna(row["Contact person Designation"]):
-            designation(index, row, df)
-        else:
-            df.at[index, "Scores"] += weight7 * 0
-        negative_score(index, row, df)
-
-def main():
-    df = pd.read_excel(
-        "/home/ssyazz/python/group/Scoring.xlsx", sheet_name="a")
-    df["Scores"] = 0
+        if pd.isna(row["Scores"]):
+            df.at[index, "Scores"] = 0
+            if not pd.isna(row["Industry"]):
+                industry(index, row, df)
+            else:
+                df.at[index, "Scores"] += weight1 * 0
+            if not pd.isna(row["Last Created"]):
+                last_created(index, row, df)
+            else:
+                df.at[index, "Scores"] += weight2 * 0
+            if not pd.isna(row["Employee Count"]):
+                employee(index, row, df)
+            else:
+                df.at[index, "Scores"] += weight3 * 0
+            if not pd.isna(row["Total Potential Revenue/Month"]):
+                revenue(index, row, df)
+            else:
+                df.at[index, "Scores"] += weight4 * 0
+            if not pd.isna(row["Physical Channel"]):
+                channel(index, row, df)
+            else:
+                df.at[index, "Scores"] += weight5 * 0
+            if not pd.isna(row["Lead Source Name"]):
+                source(index, row, df)
+            else:
+                df.at[index, "Scores"] += weight6 * 0
+            if not pd.isna(row["Contact person Designation"]):
+                designation(index, row, df)
+            else:
+                df.at[index, "Scores"] += weight7 * 0
+            negative_score(index, row, df)
+        
+def weightedscore(df):
     # change the variable inside revenue column from str to decimal
     curr = [] * len(df.index)
     for index, row in df.iterrows():
-        if not pd.isna(row["Total Potential Revenue/Month"]):
+        if isinstance(row["Total Potential Revenue/Month"], str) and not pd.isna(row["Total Potential Revenue/Month"]):
             curr = df.at[index, "Total Potential Revenue/Month"]
             value = Decimal(sub(r'[^\d.]', '', curr))
             df.at[index, "Total Potential Revenue/Month"] = value
@@ -142,10 +141,17 @@ def main():
     # insert a new column for difference between current and suspect created date
     diff = (pd.to_datetime(df["Today Date"]) - pd.to_datetime(df["Suspect Creation date by Lead Originator"])).dt.days
     df.insert(5, "Last Created", diff)
+    # scoring
     scores(df)
     margin(df)
     sorted_df = df.sort_values("Scores", ascending=False)
-    print(sorted_df)
-    sorted_df.to_csv("/home/ssyazz/python/group/new.csv", index=False)
+    return (sorted_df)
+    
+def main():
+    df = pd.read_excel(
+        "/home/ssyazz/python/group/Scoring.xlsx", sheet_name="a")
+    sorted_scored = weightedscore(df)
+    print(sorted_scored)
+    sorted_scored.to_csv("/home/ssyazz/python/group/new.csv", index=False)
 
 main()
