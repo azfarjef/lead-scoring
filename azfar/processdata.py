@@ -4,7 +4,7 @@ from fuzzyduplicates import clean_partial_duplicates
 
 def main():
 	pd.set_option('display.max_columns', 30)
-	df = pd.read_excel('Sampledata_Comet_Allcolumns_updated28thAug.xlsx', sheet_name='2test')
+	df = pd.read_excel('Sampledata_Comet_Allcolumns_updated28thAug.xlsx', sheet_name='Sample Records ')
 	df = df.dropna(axis=1, how='all')
 	df = process_data(df)
 
@@ -33,7 +33,7 @@ def process_data(df):
 	print("\nclean_duplicates---------------------------------------------------------------------------")
 	print(df)
 
-	df = output(data, df)
+	# df = output(data, df)
 
 	print("\nextract columns---------------------------------------------------------------------------")
 	print(df)
@@ -45,11 +45,11 @@ def to_lowercase(df):
 	to_remove = [
 		"Post Code",
 		"Main Phone #",
-		"Contact Person Email",
-		"Contact Person Phone",
-		"Website",
-		"SSM Number /Business Registration Number ",
-		"Total Potential Revenue/Month"
+		# "Contact Person Email",
+		# "Contact Person Phone",
+		# "Website",
+		# "SSM Number /Business Registration Number ",
+		# "Total Potential Revenue/Month"
 	]
 	fields = exclude_field(df, to_remove)
 	for field in fields:
@@ -67,22 +67,23 @@ def sort_by_name(df):
 
 # remove and merge duplicates
 def clean_duplicates(df):
-	df['Options'] = df.duplicated(subset=["name"]).astype(str)
+	df['Options'] = df.duplicated(subset=["Customer Name"]).astype(str)
 	df['Options'].replace("False", np.nan, inplace=True)
 
 	df["tmp"] = df[df.columns.values.tolist()].isna().sum(1)
 	df = df.sort_values(by="tmp").drop(columns="tmp")
 
 	df = (
-		df.groupby(["name"])
+		df.groupby(["Customer Name"])
 		.apply(lambda x: x.ffill().bfill())
-		.drop_duplicates(["name"])
+		.drop_duplicates(["Customer Name"])
 	)
 	return (df)
 
 def exclude_field(df, columns):
 	fields = df.columns.values.tolist()
 	for field in columns:
+		print(field)
 		fields.remove(field)
 	return (fields)
 
