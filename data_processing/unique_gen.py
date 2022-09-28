@@ -7,10 +7,10 @@ def	unique_id(df):
     return (df)
     
 def	new_unique_id(df):
-    sorted = df.sort_values(by = ["Unique ID", "Customer Name"])
+    sorted = df.sort_values(by = ["Unique ID", "customer name"])
     sorted["Unique ID"] = sorted.groupby(['Customer Name'])["Unique ID"].transform("max")
     sorted["Unique ID"] = sorted["Unique ID"].fillna(sorted["Unique ID"].isna().cumsum() + sorted["Unique ID"].max())
-    sorted_final = sorted.sort_values(by = ["Unique ID", "Customer Name"])
+    sorted_final = sorted.sort_values(by = ["Unique ID", "customer name"])
     df = sorted_final
     df = df.astype({"Unique ID" : "int"})
     return(df)

@@ -29,7 +29,7 @@ def main():
 
     """
     df = pd.DataFrame({
-        "customer Name": [],
+        "customer name": [],
         "address": [],
         "city": [],
         "Business Nature": []
