@@ -58,7 +58,7 @@ def to_lowercase(df):
 
 def sort_by_name(df):
 	to_remove = [
-			"Unique Lead Assignment Number "
+			"unique lead assignment number "
 		]
 	fields = exclude_field(df, to_remove)
 	df = df.drop_duplicates(subset = fields)
@@ -67,16 +67,16 @@ def sort_by_name(df):
 
 # remove and merge duplicates
 def clean_duplicates(df):
-	df['Options'] = df.duplicated(subset=["Customer Name"]).astype(str)
+	df['Options'] = df.duplicated(subset=["customer name"]).astype(str)
 	df['Options'].replace("False", np.nan, inplace=True)
 
 	df["tmp"] = df[df.columns.values.tolist()].isna().sum(1)
 	df = df.sort_values(by="tmp").drop(columns="tmp")
 
 	df = (
-		df.groupby(["Customer Name"])
+		df.groupby(["customer name"])
 		.apply(lambda x: x.ffill().bfill())
-		.drop_duplicates(["Customer Name"])
+		.drop_duplicates(["customer name"])
 	)
 	return (df)
 

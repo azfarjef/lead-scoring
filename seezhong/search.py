@@ -9,7 +9,7 @@ def search(unique_id, source):
         return
     ret_df = pd.DataFrame(
         {
-            "Customer Name": [],
+            "customer name": [],
             "Address": [],
             "City": [],
             "Business Nature": []
@@ -17,7 +17,7 @@ def search(unique_id, source):
     )
 
     for index, row in df.iterrows():
-        if unique_id in row["Customer Name"].lower():
+        if unique_id in row["customer name"].lower():
             temp = df.iloc[[index], :]
             ret_df = pd.merge(ret_df, temp, how="outer")
     print(ret_df)
