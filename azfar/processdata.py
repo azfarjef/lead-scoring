@@ -60,7 +60,7 @@ def to_lowercase(df):
 	for field in fields:
 		df[field] = df[field].astype(str)
 		df[field] = df[field].str.lower()
-	df.replace(r'nan', np.nan, regex=True)
+	df.replace(r'nan', np.nan, regex=True, inplace=True)
 	# df.fillna('thisnanwillreplaceback').apply(lambda x :x.str.lower()).replace('thisnanwillreplaceback',np.nan)
 	return (df)
 
