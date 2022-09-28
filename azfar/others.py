@@ -1,3 +1,18 @@
+import pandas as pd
+from processdata import process_data
+from output import output_data
+
+def main():
+	df = pd.read_csv("merge.csv", index_col=[0])
+	df, df_full = process_data(df)
+	print(df)
+	print("Full data -----------------------------------------------------------")
+	print(df_full)
+	print(df_full.dtypes)
+	output_data([df_full], df)
+
+main()
+
 # Other methods to remove duplicates
 
 # # Zeroth method

@@ -9,7 +9,7 @@ def main():
 	data = [df]
 	output(data, df)
 
-def output_data(data, df):
+def output(data, df):
 	# 'Company info', 'Sales', 'Contact info', 'Lead info', 'Lead scores'
 	# column = [['Company info','Unique Lead Assignment Number ','Customer Name','Address Line 1','Address Line 2','City','State','Post Code','Industry','Physical Channel','Main Phone #','Website','SSM Number /Business Registration Number '],
 	# 	['Sales','Unique Lead Assignment Number ','Customer Name','Competitors','Total Potential Revenue/Month'],
@@ -39,13 +39,13 @@ def output_data(data, df):
 	print(sheetName)
 
 	# data = []
-	# print(len(column))
+	print(len(column))
 	for col in column[1:]:
 		tmp = extract_column(df, col)
 		data.append(tmp)
 	
-	# print(len(data))
-	# print(data[1].columns.values.tolist())
+	print(len(data))
+	print(data[1].columns.values.tolist())
 	save_xls(data, "output.xlsx", sheetName)
 
 	# print(df)
@@ -58,7 +58,7 @@ def extract_column(df, column):
 def save_xls(list_dfs, xls_path, sheetName):
 	with ExcelWriter(xls_path) as writer:
 		for n, df in enumerate(list_dfs):
-			# print(n)
+			print(n)
 			df.to_excel(writer, index=False, sheet_name=sheetName[n])
 
 if __name__ == "__main__":

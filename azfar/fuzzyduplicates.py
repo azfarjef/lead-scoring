@@ -81,6 +81,7 @@ def find_partitions(df, match_func, max_size=None, block_by=None):
 		partitions.append(partition)
 		records = np.delete(records, indexes)
 
+	print(partitions)
 	return pd.Series({
 		idx: partition_id
 		for partition_id, idxs in enumerate(partitions)
@@ -89,15 +90,17 @@ def find_partitions(df, match_func, max_size=None, block_by=None):
 
 def similar(one, two, df):
 	fields = df.columns.values.tolist()
-	fields.remove("no")
+	fields.remove("Unique Lead Assignment Number ")
 	ratio = 0
 	for field in fields:
 		ratio += fuzz.ratio(one[field], two[field])
 	ratio = ratio/len(fields)
+	# print(ratio)
+	return (ratio > 90)
+	# print(f"{one} {two} = {ratio}")
 	# ratio = fuzz.ratio(one['name'], two['name'])
 	# if (ratio > 80):
 	# 	print(ratio, one['no'], one['name'], two['no'], two['name'],)
-	return (ratio > 80)
 
 if __name__ == "__main__":
 	main()
