@@ -17,7 +17,7 @@ def output_data(data, df):
 	# 	['Lead info','Unique Lead Assignment Number ','Customer Name','Lead Source Name ','Lead Source Details , if any ','Suspect Creation date by Lead Originator ','Suspect Creation by Lead Originator Name ','Suspect Accepted By','Suspect Accepted At','Prospect Accepted By','Prospect Accepted At'],
 	# 	['Lead scores','Unique Lead Assignment Number ','Customer Name','Source Type','Lead Priority Level']
 	# 	]
-	with open('2erd_columns.csv', newline='', mode='r', encoding='utf-8-sig') as f:
+	with open('data/2erd_columns.csv', newline='', mode='r', encoding='utf-8-sig') as f:
 		reader = csv.reader(f)
 		column = list(reader)
 	unique_column = df.columns.values.tolist()
