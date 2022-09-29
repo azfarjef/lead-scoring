@@ -90,7 +90,7 @@ def find_partitions(df, match_func, max_size=None, block_by=None):
 
 def similar(one, two, df):
 	fields = df.columns.values.tolist()
-	fields.remove("unique lead assignment number ")
+	fields.remove("Unique Lead Assignment Number ")
 	ratio = 0
 	for field in fields:
 		ratio += fuzz.ratio(one[field], two[field])

@@ -3,7 +3,7 @@ import sys
 
 def main():
     data = []
-    columns = ["customer name", "address", "city", "business nature"]
+    columns = ["Customer Name", "address", "city", "business nature"]
 
     i = 1
     while i < len(sys.argv):
@@ -29,7 +29,7 @@ def main():
 
     """
     df = pd.DataFrame({
-        "customer name": [],
+        "Customer Name": [],
         "address": [],
         "city": [],
         "Business Nature": []

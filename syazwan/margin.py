@@ -1,13 +1,16 @@
 import pandas as pd
 
 def	margin(df):
+    df["Source Type"] = df["Source Type"].astype(str)
     for index, row in df.iterrows():
-        if pd.isna(row["source type"]):
-            if row["lead priority level"] >= 65:
-                df.at[index, "source type"] = "Hot"
-            elif row["lead priority level"] >= 40 and row["lead priority level"] < 65:
-                df.at[index, "source type"] = "Warm"
-            elif row["lead priority level"] >= 0 and row["lead priority level"] < 40:
-                df.at[index, "source type"] = "Cold"
+    
+            if row["Lead Priority Level"] >= 65:
+                df.at[index, "Source Type"] = "Hot"
+            elif row["Lead Priority Level"] >= 40 and row["Lead Priority Level"] < 65:
+                df.at[index, "Source Type"] = "Warm"
+            elif row["Lead Priority Level"] >= 0 and row["Lead Priority Level"] < 40:
+                df.at[index, "Source Type"] = "Cold"
             else:
-                df.at[index, "source type"] = "Dead"
+                print(type(df.at[index, "Source Type"]))
+                df.at[index, "Source Type"] = "Dead"
+                print(type(df.at[index, "Source Type"]))

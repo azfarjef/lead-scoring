@@ -6,14 +6,14 @@ from margin import margin
 
 weight1 = 0.3   # Industry
 weight2 = 0.15  # Suspect creation date
-weight3 = 0.1   # Employee count
+weight3 = 0.1   # Employee Count
 weight4 = 0.1   # Total potential revenue
-weight5 = 0.05  # Physical channel
+weight5 = 0.05  # Physical Channel
 weight6 = 0.1   # Lead source
-weight7 = 0.2   # Contact person designation
+weight7 = 0.2   # Contact person Designation
 
 
-def industry(index, row, df):
+def Industry(index, row, df):
     if row["Industry"].lower() == "consumer" or row["Industry"].lower() == "retail":
         df.at[index, "Scores"] += weight1 * 100
     elif row["Industry"].lower() == "chemical and energy" or row["Industry"].lower() == "technology" or row["Industry"].lower() == "service logistics" \
@@ -98,7 +98,7 @@ def scores(df):
         if pd.isna(row["Scores"]):
             df.at[index, "Scores"] = 0
             if not pd.isna(row["Industry"]):
-                industry(index, row, df)
+                Industry(index, row, df)
             else:
                 df.at[index, "Scores"] += weight1 * 0
             if not pd.isna(row["Last Created"]):

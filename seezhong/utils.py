@@ -7,7 +7,7 @@ def gen_data(sources, output):
     sources = [string.strip() for string in sources.split(",")]
 
     data = []
-    columns = ["customer name", "address", "city", "business nature"]
+    columns = ["Customer Name", "address", "city", "business nature"]
 
     i = 0
     while i < len(sources):
