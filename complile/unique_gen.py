@@ -1,8 +1,6 @@
 import	pandas as pd
 import  numpy as np
 
-#df = pd.read_excel("/home/ssyazz/python/group/Scoring.xlsx", sheet_name = "b")
-
 def	unique_id(df):
     df.columns = map(str.lower, df.columns)
     df['unique lead assignment number '] = df.groupby(['customer name']).ngroup()
@@ -29,6 +27,7 @@ def unique(df):
 
 def	main():
     #f = unique_id(df)
+    df = pd.read_excel("/home/ssyazz/python/group/Scoring.xlsx", sheet_name = "b")
     f = new_unique_id(df)
     print(f)
     print(type(f.at[1, "unique lead assignment number "]))
