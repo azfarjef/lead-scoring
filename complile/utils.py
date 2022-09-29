@@ -1,6 +1,5 @@
 from tkinter import *
 import pandas as pd
-import sys
 
 test_df = None
 

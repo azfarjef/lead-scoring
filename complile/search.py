@@ -1,5 +1,4 @@
 import pandas as pd
-import sys
 
 def read_data(source):
     try:

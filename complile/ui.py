@@ -3,7 +3,6 @@ from gen_data import gen_data
 from utils import clear_entry
 from widget import menu_widget, frame_widget, label_widget, entry_widget, grid_widget
 from search import search
-import pandas as pd
 
 def ui():
     win = Tk()
