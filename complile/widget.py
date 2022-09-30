@@ -1,6 +1,7 @@
 from tkinter import *
 from gen_data import gen_data
 from utils import clear_entry
+import pandas as pd
 
 def menu_widget(root):
     menu = Menu(root)
@@ -20,9 +21,9 @@ def label_widget(root):
     label_1 = Label(root, text="Sources", anchor=E)
     label_2 = Label(root, text="Save As...", anchor=E)
     label_3 = Label(root, text="Search by Name", font="helvatica 10 bold underline", anchor=E)
-    label_4 = Label(root, text="Company Name", anchor=E)
-    label_5 = Label(root, text="From", anchor=E)
-    return label_0, label_1, label_2, label_3, label_4, label_5
+    label_4 = Label(root, text="ID / Company Name", anchor=E)
+    #label_5 = Label(root, text="From", anchor=E)
+    return label_0, label_1, label_2, label_3, label_4
 
 def entry_widget(root):
     fileEntry = Entry(root)
@@ -30,9 +31,18 @@ def entry_widget(root):
     saveEntry = Entry(root)
     saveEntry.insert(0, "results")
     searchEntry = Entry(root)
-    fromEntry = Entry(root)
-    entries = [fileEntry, saveEntry, searchEntry, fromEntry]
+    #fromEntry = Entry(root)
+    entries = [fileEntry, saveEntry, searchEntry]
     return entries
+
+def radio_widget(root):
+    options = ["All", "Company info", "Sales", "Contact info", "Lead info", "Lead scores"]
+    value_inside = StringVar()
+    value_inside.set("All")
+    mb = OptionMenu(root, value_inside, *options)
+    return mb, value_inside
+
+
 
 def grid_widget(widgets):
     widgets[0].grid(sticky=W, row=0, columnspan=2, padx=5)
@@ -40,10 +50,11 @@ def grid_widget(widgets):
     widgets[2].grid(sticky=E, row=2, padx=5)
     widgets[3].grid(sticky=W, row=5, columnspan=2) 
     widgets[4].grid(sticky=E, row=6, padx=5)
-    widgets[5].grid(sticky=E, row=7, padx=5)
-    widgets[6].grid(row=1, column=1, pady=5, padx=3)
-    widgets[7].grid(row=2, column=1, pady=5, padx=3)
-    widgets[8].grid(row=6, column=1, pady=5, padx=3)
-    widgets[9].grid(row=7, column=1, pady=5, padx=3)
-    widgets[10].grid(row=3, columnspan=2)
-    widgets[11].grid(row=8, columnspan=2)
+    #widgets[5].grid(sticky=E, row=7, padx=5)
+    widgets[5].grid(row=1, column=1, pady=5, padx=3)
+    widgets[6].grid(row=2, column=1, pady=5, padx=3)
+    widgets[7].grid(row=6, column=1, pady=5, padx=3)
+    #widgets[9].grid(row=7, column=1, pady=5, padx=3)
+    widgets[8].grid(sticky=E, row=3, columnspan=2)
+    widgets[9].grid(sticky=E, row=7, columnspan=2)
+    widgets[10].grid(sticky=E, row=7, column=0) 

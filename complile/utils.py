@@ -1,5 +1,7 @@
 from tkinter import *
+from tkinter import messagebox
 import pandas as pd
+import sys
 
 test_df = None
 
@@ -21,7 +23,7 @@ def find_and_merge(data):
                     df1 = pd.read_csv(data[i])
                 except FileNotFoundError:
                     error = f"{data[i]} not found"
-                    print(error)
+                    messagebox.showerror("Error", error)
                     return error
             else:
                 df1 = merged_df
@@ -29,7 +31,7 @@ def find_and_merge(data):
                 df2 = pd.read_csv(data[i + 1])
             except FileNotFoundError:
                 error = f"{data[i + 1]} not found"
-                print(error)
+                messagebox.showerror("Error", error)
             #merged_df = pd.merge(df1, df2, how="outer")
             frames = [df1, df2]
             merged_df = pd.concat(frames, join="outer")
@@ -39,7 +41,7 @@ def find_and_merge(data):
             merged_df = pd.read_csv(data[i])
         except FileNotFoundError:
             error = f"{data[i]} not found"
-            print(error)
+            messagebox.showerror("Error", error)
     return merged_df
 
 def drop_column(merged_df):

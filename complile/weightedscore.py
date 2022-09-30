@@ -3,7 +3,7 @@ from re import sub
 from decimal import Decimal
 from datetime import date
 from margin import margin
-from unique_gen import unique
+from unique_gen import unique_id, new_unique_id
 
 weight1 = 0.3   # Industry
 weight2 = 0.15  # Suspect creation date
@@ -167,7 +167,8 @@ def weightedscore(df):
 def main():
     df = pd.read_csv(
         "/home/ssyazz/python/group/merge.csv")
-    df = unique(df)
+    #df = unique_id(df)
+    df = new_unique_id(df)
     sorted_scored = weightedscore(df)
     print(sorted_scored)
     sorted_scored.to_csv("/home/ssyazz/python/group/new.csv", index = False)
