@@ -1,6 +1,9 @@
 import pandas as pd
 import numpy as np
 from fuzzyduplicates import clean_partial_duplicates
+from mycolumn import *
+
+col1 = MyColumn()
 
 def main():
 	pd.set_option('display.max_columns', 30)
@@ -14,7 +17,7 @@ def process_data(df):
 	print("\nOriginal Data---------------------------------------------------------------------------")
 	print(df)
 
-	df = to_lowercase(df)
+	df = to_lowercase(df, 1)
 
 	print("\nto_lowercase---------------------------------------------------------------------------")
 	print(df)
@@ -35,6 +38,9 @@ def process_data(df):
 	print("\nclean_duplicates---------------------------------------------------------------------------")
 	print(df)
 
+	to_lowercase(df_full, 2)
+	df = to_lowercase(df, 2)
+
 	# df = output(data, df)
 
 	# print("\nextract columns---------------------------------------------------------------------------")
@@ -43,9 +49,9 @@ def process_data(df):
 	return (df, df_full)
 
 
-def to_lowercase(df):
+def to_lowercase(df, option):
 	to_remove = [
-		"unique lead assignment number ",
+		col1.unique_id,
 		"Suspect Creation date by Lead Originator",
 		"Post Code",
 		"Main Phone #",
@@ -59,17 +65,23 @@ def to_lowercase(df):
 	fields = exclude_field(df, to_remove)
 	for field in fields:
 		df[field] = df[field].astype(str)
-		df[field] = df[field].str.lower()
-	df.replace(r'nan', np.nan, regex=True, inplace=True)
+		if option == 1:
+			df[field] = df[field].str.lower()
+		else:
+			df[field] = df[field].str.title()
+	if option == 1:
+		df.replace(r'^nan$', np.nan, regex=True, inplace=True)
+	else:
+		df.replace(r'^Nan$', np.nan, regex=True, inplace=True)
 	# df.fillna('thisnanwillreplaceback').apply(lambda x :x.str.lower()).replace('thisnanwillreplaceback',np.nan)
 	return (df)
 
 def sort_by_name(df):
 	to_remove = [
-			"unique lead assignment number "
+			col1.unique_id
 		]
 	fields = exclude_field(df, to_remove)
-	i = fields.index("customer name")
+	i = fields.index(col1.name)
 	fields.insert(0, fields.pop(i))
 	print(fields)
 	df = df.drop_duplicates(subset = fields)
@@ -78,16 +90,16 @@ def sort_by_name(df):
 
 # remove and merge duplicates
 def clean_duplicates(df):
-	df['Options'] = df.duplicated(subset=["customer name"]).astype(str)
+	df['Options'] = df.duplicated(subset=[col1.name]).astype(str)
 	df['Options'].replace("False", np.nan, inplace=True)
 
 	df["tmp"] = df[df.columns.values.tolist()].isna().sum(1)
 	df = df.sort_values(by="tmp").drop(columns="tmp")
 
 	df = (
-		df.groupby(["customer name"])
+		df.groupby([col1.name])
 		.apply(lambda x: x.ffill().bfill())
-		.drop_duplicates(["customer name"])
+		.drop_duplicates([col1.name])
 	)
 	return (df)
 

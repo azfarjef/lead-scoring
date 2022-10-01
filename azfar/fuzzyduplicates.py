@@ -1,6 +1,9 @@
 import numpy as np
 import pandas as pd
 from fuzzywuzzy import fuzz
+from mycolumn import *
+
+col1 = MyColumn()
 
 def main():
 	df = pd.read_excel('Sampledata_Comet_Allcolumns_updated28thAug.xlsx', sheet_name='fuzzy')
@@ -90,7 +93,7 @@ def find_partitions(df, match_func, max_size=None, block_by=None):
 
 def similar(one, two, df):
 	fields = df.columns.values.tolist()
-	fields.remove("unique lead assignment number ")
+	fields.remove(col1.unique_id)
 	ratio = 0
 	for field in fields:
 		ratio += fuzz.ratio(one[field], two[field])
