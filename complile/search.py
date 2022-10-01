@@ -1,25 +1,35 @@
+from tkinter import messagebox
+from tkinter import *
 import pandas as pd
 import sys
 
-def read_data(source):
+def read_data(sheet):
+    if sheet == "All":
+        sheet = "Master data"
     try:
-        df = pd.read_excel(source) #sheet_name="")
+        df = pd.read_excel("output.xlsx", sheet_name=sheet)
     except FileNotFoundError:
-        print(f"{source} not found")
+        messagebox.showerror("Error", "master output not found")
     return df
 
-def find_and_merge_data(unique_id, df, ret_df):
-    for index, row in df.iterrows():
-        if unique_id in row["Customer Name"].lower():
-            temp = df.iloc[[index], :]
-            ret_df = pd.merge(ret_df, temp, how="outer")
+def find_and_merge_data(entry, df, ret_df):
+    if entry.isdigit():
+        for index, row in df.iterrows():
+            if entry == str(row["Unique Lead Assignment Number "]):
+                temp = df.iloc[[index], :]
+                ret_df = pd.merge(ret_df, temp, how="outer")
+    else:
+        for index, row in df.iterrows():
+            if entry in row["Customer Name"].lower():
+                temp = df.iloc[[index], :]
+                ret_df = pd.merge(ret_df, temp, how="outer")
     print(ret_df)
     if ret_df.empty:
         error = "No results"
-        print(error)
+        messagebox.showinfo("message", "no results")
     return ret_df
 
-def search(unique_id, source):
+def search(entry, mb_value):
     ret_df = pd.DataFrame(
             {
                 "Customer Name": [],
@@ -29,8 +39,10 @@ def search(unique_id, source):
             }
     )
     try:
-        df = read_data(source)
+        df = read_data(mb_value)
     except:
+        messagebox.showerror("Error", f"{mb_value} not found")
         return
-    ret_df = find_and_merge_data(unique_id, df, ret_df) 
-    ret_df.to_csv("search_result.csv", index=False)
+    ret_df = find_and_merge_data(entry, df, ret_df) 
+    if ret_df.empty == False:
+        ret_df.to_csv(entry + ".csv", index=False)

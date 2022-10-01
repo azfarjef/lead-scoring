@@ -3,7 +3,7 @@ from re import sub
 from decimal import Decimal
 from datetime import date
 from margin import margin
-from unique_gen import unique_id, new_unique_id
+from unique_gen import unique
 
 weight1 = 0.3   # Industry
 weight2 = 0.15  # Suspect creation date
@@ -143,6 +143,12 @@ def cleaning(df):
         df = df.drop('index', axis = 1)
     return (df)
 
+def put_last(df):
+    cols_at_end = ['Source Type', 'Lead Priority Level']
+    df = df[[c for c in df if c not in cols_at_end]
+            + [c for c in cols_at_end if c in df]]
+    return (df)
+
 def weightedscore(df):
     df = cleaning(df)
     # change the variable inside revenue column from str to decimal
@@ -161,14 +167,14 @@ def weightedscore(df):
     # scoring
     scores(df)
     margin(df)
+    df = put_last(df)
     sorted_df = df.sort_values("lead priority level", ascending=False)
     return (sorted_df)
     
 def main():
     df = pd.read_csv(
         "/home/ssyazz/python/group/merge.csv")
-    #df = unique_id(df)
-    df = new_unique_id(df)
+    df = unique(df)
     sorted_scored = weightedscore(df)
     print(sorted_scored)
     sorted_scored.to_csv("/home/ssyazz/python/group/new.csv", index = False)
