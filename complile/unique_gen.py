@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 
 def unique(df):
-    print(df.columns.values.tolist())
-    if df["Unique Lead Assignment Number "].replace(r'^\s*$', np.nan, regex=True).isna().all():
+    df.columns = map(str.lower(), df.columns)
+    if df["unique lead assignment number "].replace(r'^\s*$', np.nan, regex=True).isna().all():
         unique_id(df)
         return df
     else:
