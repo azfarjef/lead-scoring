@@ -4,6 +4,7 @@ from decimal import Decimal
 from datetime import date
 from margin import margin
 from unique_gen import unique
+import numpy as np
 
 weight1 = 0.3   # Industry
 weight2 = 0.15  # Suspect creation date
