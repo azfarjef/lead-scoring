@@ -143,6 +143,12 @@ def cleaning(df):
         df = df.drop('index', axis = 1)
     return (df)
 
+def put_last(df):
+    cols_at_end = ['source type', 'lead priority level']
+    df = df[[c for c in df if c not in cols_at_end]
+            + [c for c in cols_at_end if c in df]]
+    return (df)
+
 def weightedscore(df):
     df = cleaning(df)
     # change the variable inside revenue column from str to decimal
@@ -161,6 +167,7 @@ def weightedscore(df):
     # scoring
     scores(df)
     margin(df)
+    df = put_last(df)
     sorted_df = df.sort_values("lead priority level", ascending=False)
     return (sorted_df)
     
