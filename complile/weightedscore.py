@@ -144,7 +144,7 @@ def cleaning(df):
     return (df)
 
 def put_last(df):
-    cols_at_end = ['source type', 'lead priority level']
+    cols_at_end = ['Source Type', 'Lead Priority Level']
     df = df[[c for c in df if c not in cols_at_end]
             + [c for c in cols_at_end if c in df]]
     return (df)
