@@ -15,126 +15,126 @@ weight6 = 0.1   # Lead source
 weight7 = 0.2   # contact person designation
 
 
-def industry(index, row, df):
-    if row["industry"].lower() == "consumer" or row["industry"].lower() == "retail":
-        df.at[index, "lead priority level"] += weight1 * 100
-    elif row["industry"].lower() == "chemical and energy" or row["industry"].lower() == "technology" or row["industry"].lower() == "service logistics" \
-            or row["industry"].lower() == "manufacturing" or row["industry"].lower() == "distributor":
-        df.at[index, "lead priority level"] += weight1 * 80
-    elif row["industry"].lower() == "life sciences and healthcare":
-        df.at[index, "lead priority level"] += weight1 * 60
+def industry(index, row, df, col):
+    if row[col["industry"]].lower() == "consumer" or row[col["industry"]].lower() == "retail":
+        df.at[index, col["score"]] += weight1 * 100
+    elif row[col["industry"]].lower() == "chemical and energy" or row[col["industry"]].lower() == "technology" or row[col["industry"]].lower() == "service logistics" \
+            or row[col["industry"]].lower() == "manufacturing" or row[col["industry"]].lower() == "distributor":
+        df.at[index, col["score"]] += weight1 * 80
+    elif row[col["industry"]].lower() == "life sciences and healthcare":
+        df.at[index, col["score"]] += weight1 * 60
     else:
-        df.at[index, "lead priority level"] += weight1 * 40
+        df.at[index, col["score"]] += weight1 * 40
 
-def last_created(index, row, df):
+def last_created(index, row, df, col):
     if row["Last Created"] < 10:
-        df.at[index, "lead priority level"] += weight2 * 100
+        df.at[index, col["score"]] += weight2 * 100
     elif row["Last Created"] >= 10 and row["Last Created"] < 31:
-        df.at[index, "lead priority level"] += weight2 * 50
+        df.at[index, col["score"]] += weight2 * 50
     elif row["Last Created"] >= 31 and row["Last Created"] < 90:
-        df.at[index, "lead priority level"] += weight2 * -50
+        df.at[index, col["score"]] += weight2 * -50
     else:
-        df.at[index, "lead priority level"] += weight2 * -100
+        df.at[index, col["score"]] += weight2 * -100
 
-def	employee(index, row, df):
-	if row["employee count"] > 100:
-		df.at[index, "lead priority level"] += weight3 * 100
-	elif row["employee count"] <= 100 and row["employee count"] > 50:
-		df.at[index, "lead priority level"] += weight3 * 50
-	elif row["employee count"] <= 50:
-		df.at[index, "lead priority level"] += weight3 * 20
+def	employee(index, row, df, col):
+	if row[col["employee_count"]] > 100:
+		df.at[index, col["score"]] += weight3 * 100
+	elif row[col["employee_count"]] <= 100 and row[col["employee_count"]] > 50:
+		df.at[index, col["score"]] += weight3 * 50
+	elif row[col["employee_count"]] <= 50:
+		df.at[index, col["score"]] += weight3 * 20
 
-def revenue(index, row, df):
-    if row["total potential revenue/month"] > 1000:
-        df.at[index, "lead priority level"] += weight4 * 100
-    elif row ["total potential revenue/month"] > 500 and row["total potential revenue/month"] <= 1000:
-        df.at[index, "lead priority level"] += weight4 * 80
-    elif row["total potential revenue/month"] > 100 and row["total potential revenue/month"] <= 500:
-        df.at[index, "lead priority level"] += weight4 * 50
+def revenue(index, row, df, col):
+    if row[col["revenue"]] > 1000:
+        df.at[index, col["score"]] += weight4 * 100
+    elif row [col["revenue"]] > 500 and row[col["revenue"]] <= 1000:
+        df.at[index, col["score"]] += weight4 * 80
+    elif row[col["revenue"]] > 100 and row[col["revenue"]] <= 500:
+        df.at[index, col["score"]] += weight4 * 50
     else:
-        df.at[index, "lead priority level"] += weight4 * 20
+        df.at[index, col["score"]] += weight4 * 20
 
-def channel(index, row, df):
-    if row["physical channel"].lower() == "b2b":
-        df.at[index, "lead priority level"] += weight5 * 100
-    elif row["physical channel"].lower() == "b2c":
-        df.at[index, "lead priority level"] += weight5 * 80
+def channel(index, row, df, col):
+    if row[col["physical_channel"]].lower() == "b2b":
+        df.at[index, col["score"]] += weight5 * 100
+    elif row[col["physical_channel"]].lower() == "b2c":
+        df.at[index, col["score"]] += weight5 * 80
     else:
-        df.at[index, "lead priority level"] += weight5 * -50
+        df.at[index, col["score"]] += weight5 * -50
 
-def source(index, row, df):
-    if row["lead source name"].lower() == "facebook" or row["lead source name"].lower() == "twitter":
-        df.at[index, "lead priority level"] += weight6 * 70
-    elif row["lead source name"].lower() == "ex database" or row["lead source name"].lower() == "content blogs":
-        df.at[index, "lead priority level"] += weight6 * 50
-    elif row["lead source name"].lower() == "signup pages" or row["lead source name"].lower() == "exhibitions":
-        df.at[index, "lead priority level"] += weight6 * 100
+def source(index, row, df, col):
+    if row[col["lead_source"]].lower() == "facebook" or row[col["lead_source"]].lower() == "twitter":
+        df.at[index, col["score"]] += weight6 * 70
+    elif row[col["lead_source"]].lower() == "ex database" or row[col["lead_source"]].lower() == "content blogs":
+        df.at[index, col["score"]] += weight6 * 50
+    elif row[col["lead_source"]].lower() == "signup pages" or row[col["lead_source"]].lower() == "exhibitions":
+        df.at[index, col["score"]] += weight6 * 100
     else:
-        df.at[index, "lead priority level"] += weight6 * -10
+        df.at[index, col["score"]] += weight6 * -10
 
-def designation(index, row, df):
-    if row["contact person designation"].lower() == "ceo" or row["contact person designation"].lower() == "sales" or row["contact person designation"].lower() == "director" \
-        or row["contact person designation"].lower() == "logistics":
-        df.at[index, "lead priority level"] += weight7 * 100
-    elif row["contact person designation"].lower() == "executive" or row["contact person designation"].lower() == "secretary":
-        df.at[index, "lead priority level"] += weight7 * 80
-    elif row["contact person designation"].lower() == "technician":
-        df.at[index, "lead priority level"] += weight7 * 50
+def designation(index, row, df, col):
+    if row[col["contact_designation"]].lower() == "ceo" or row[col["contact_designation"]].lower() == "sales" or row[col["contact_designation"]].lower() == "director" \
+        or row[col["contact_designation"]].lower() == "logistics":
+        df.at[index, col["score"]] += weight7 * 100
+    elif row[col["contact_designation"]].lower() == "executive" or row[col["contact_designation"]].lower() == "secretary":
+        df.at[index, col["score"]] += weight7 * 80
+    elif row[col["contact_designation"]].lower() == "technician":
+        df.at[index, col["score"]] += weight7 * 50
     else:
-        df.at[index, "lead priority level"] += weight7 * 0
+        df.at[index, col["score"]] += weight7 * 0
 
-def negative_score(index, row, df):
-    if not pd.isna(row["competitors"]):
-        df.at[index, "lead priority level"] += 1 * -100
+def negative_score(index, row, df, col):
+    if not pd.isna(row[col["competitor"]]):
+        df.at[index, col["score"]] += 1 * -100
     else:
-        df.at[index, "lead priority level"] += 1 * 0
-    if not pd.isna(row["contact person email"]) and not pd.isna(row["contact person phone"]):
-        df.at[index, "lead priority level"] += 1 * 0
-    elif pd.isna(row["contact person email"]) and pd.isna(row["contact person phone"]):
-        df.at[index, "lead priority level"] += 1 * -20
+        df.at[index, col["score"]] += 1 * 0
+    if not pd.isna(row[col["contact_email"]]) and not pd.isna(row[col["contact_phone"]]):
+        df.at[index, col["score"]] += 1 * 0
+    elif pd.isna(row[col["contact_email"]]) and pd.isna(row[col["contact_phone"]]):
+        df.at[index, col["score"]] += 1 * -20
     else:
-        df.at[index, "lead priority level"] += 1 * -10
+        df.at[index, col["score"]] += 1 * -10
 
-def scores(df):
+def scores(df, col):
     for index, row in df.iterrows():
-        if pd.isna(row["lead priority level"]):
-            df.at[index, "lead priority level"] = 0
-            if "industry" in df.columns:
-                if not pd.isna(row["industry"]):
-                    industry(index, row, df)
+        if pd.isna(row[col["score"]]):
+            df.at[index, col["score"]] = 0
+            if col["industry"] in df.columns:
+                if not pd.isna(row[col["industry"]]):
+                    industry(index, row, df, col)
                 else:
-                    df.at[index, "lead priority level"] += weight1 * 0
+                    df.at[index, col["score"]] += weight1 * 0
             if "Last Created" in df.columns:
                 if not pd.isna(row["Last Created"]):
-                   last_created(index, row, df)
+                   last_created(index, row, df, col)
                 else:
-                    df.at[index, "lead priority level"] += weight2 * 0
-            if "employee count" in df.columns:
-                if not pd.isna(row["employee count"]):
-                    employee(index, row, df)
+                    df.at[index, col["score"]] += weight2 * 0
+            if col["employee_count"] in df.columns:
+                if not pd.isna(row[col["employee_count"]]):
+                    employee(index, row, df, col)
                 else:
-                    df.at[index, "lead priority level"] += weight3 * 0
-            if "total potential revenue/month" in df.columns:
-                if not pd.isna(row["total potential revenue/month"]):
-                    revenue(index, row, df)
+                    df.at[index, col["score"]] += weight3 * 0
+            if col["revenue"] in df.columns:
+                if not pd.isna(row[col["revenue"]]):
+                    revenue(index, row, df, col)
                 else:
-                    df.at[index, "lead priority level"] += weight4 * 0
-            if "physical channel" in df.columns:
-                if not pd.isna(row["physical channel"]):
-                    channel(index, row, df)
+                    df.at[index, col["score"]] += weight4 * 0
+            if col["physical_channel"] in df.columns:
+                if not pd.isna(row[col["physical_channel"]]):
+                    channel(index, row, df, col)
                 else:
-                    df.at[index, "lead priority level"] += weight5 * 0
-            if "lead source name" in df.columns:
-                if not pd.isna(row["lead source name"]):
-                    source(index, row, df)
+                    df.at[index, col["score"]] += weight5 * 0
+            if col["lead_source"] in df.columns:
+                if not pd.isna(row[col["lead_source"]]):
+                    source(index, row, df, col)
                 else:
-                    df.at[index, "lead priority level"] += weight6 * 0
-            if "contact person designation" in df.columns:
-                if not pd.isna(row["contact person designation"]):
-                    designation(index, row, df)
+                    df.at[index, col["score"]] += weight6 * 0
+            if col["contact_designation"] in df.columns:
+                if not pd.isna(row[col["contact_designation"]]):
+                    designation(index, row, df, col)
                 else:
-                    df.at[index, "lead priority level"] += weight7 * 0
-            negative_score(index, row, df)
+                    df.at[index, col["score"]] += weight7 * 0
+            negative_score(index, row, df, col)
         
 def cleaning(df):
     df.reset_index(inplace=True)
@@ -144,32 +144,32 @@ def cleaning(df):
         df = df.drop('index', axis = 1)
     return (df)
 
-def put_last(df):
-    cols_at_end = ['Source Type', 'Lead Priority Level']
+def put_last(df, col):
+    cols_at_end = [col["source_type"], col["score"]]
     df = df[[c for c in df if c not in cols_at_end]
             + [c for c in cols_at_end if c in df]]
     return (df)
 
-def weightedscore(df):
+def weightedscore(df, col):
     df = cleaning(df)
     # change the variable inside revenue column from str to decimal
     curr = [] * len(df.index)
     for index, row in df.iterrows():
-        if isinstance(row["total potential revenue/month"], str) and not pd.isna(row["total potential revenue/month"]):
-            curr = df.at[index, "total potential revenue/month"]
+        if isinstance(row[col["revenue"]], str) and not pd.isna(row[col["revenue"]]):
+            curr = df.at[index, col["revenue"]]
             value = Decimal(sub(r'[^\d.]', '', curr))
-            df.at[index, "total potential revenue/month"] = value
+            df.at[index, col["revenue"]] = value
     # insert a new column for current date
     today_date = date.today()
     df.insert(3, 'Today Date', today_date)
     # insert a new column for difference between current and suspect created date
-    diff = (pd.to_datetime(df["Today Date"]) - pd.to_datetime(df["suspect creation date by lead originator"])).dt.days
+    diff = (pd.to_datetime(df["Today Date"]) - pd.to_datetime(df[col["created_date"]])).dt.days
     df.insert(5, "Last Created", diff)
     # scoring
-    scores(df)
-    margin(df)
-    df = put_last(df)
-    sorted_df = df.sort_values("lead priority level", ascending=False)
+    scores(df, col)
+    margin(df, col)
+    df = put_last(df, col)
+    sorted_df = df.sort_values(col["score"], ascending=False)
     return (sorted_df)
     
 def main():

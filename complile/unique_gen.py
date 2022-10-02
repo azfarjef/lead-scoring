@@ -1,27 +1,26 @@
 import pandas as pd
 import numpy as np
 
-def unique(df):
-    df.columns = map(str.lower, df.columns)
-    if df["unique lead assignment number "].replace(r'^\s*$', np.nan, regex=True).isna().all():
-        unique_id(df)
+def unique(df, col):
+    # df.columns = map(str.lower, df.columns)
+    if df[col["unique_id"]].replace(r'^\s*$', np.nan, regex=True).isna().all():
+        unique_id(df, col)
         return df
     else:
-        new_unique_id(df)
+        new_unique_id(df, col)
         return df
 
-
-def	unique_id(df):
-    df['unique lead assignment number '] = df.groupby(['customer name']).ngroup()
+def	unique_id(df, col):
+    df[col["unique_id"]] = df.groupby([col["name"]]).ngroup()
     return (df)
     
-def	new_unique_id(df):
-    sorted = df.sort_values(by = ["unique lead assignment number ", "customer name"])
-    sorted["unique lead assignment number "] = sorted.groupby(['customer name'])["unique lead assignment number "].transform("max")
-    sorted["unique lead assignment number "] = sorted["unique lead assignment number "].fillna(sorted["unique lead assignment number "].isna().cumsum() + sorted["unique lead assignment number "].max())
-    sorted_final = sorted.sort_values(by = ["unique lead assignment number ", "customer name"])
+def	new_unique_id(df, col):
+    sorted = df.sort_values(by = [col["unique_id"], col["name"]])
+    sorted[col["unique_id"]] = sorted.groupby([col["name"]])[col["unique_id"]].transform("max")
+    sorted[col["unique_id"]] = sorted[col["unique_id"]].fillna(sorted[col["unique_id"]].isna().cumsum() + sorted[col["unique_id"]].max())
+    sorted_final = sorted.sort_values(by = [col["unique_id"], col["name"]])
     df = sorted_final
-    df = df.astype({"unique lead assignment number " : "int"})
+    df = df.astype({col["unique_id"] : "int"})
     return(df)
 
 def	main():
@@ -29,7 +28,7 @@ def	main():
     df = pd.read_excel("/home/ssyazz/python/group/Scoring.xlsx", sheet_name = "b")
     f = new_unique_id(df)
     print(f)
-    print(type(f.at[1, "unique lead assignment number "]))
+    print(type(f.at[1, col["unique_id"]]))
 
 if __name__ == "__main__":    
     main()

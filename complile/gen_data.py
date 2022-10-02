@@ -11,8 +11,8 @@ def gen_data(sources, output):
     print(df.columns)
     df, df_full = process_data(df, col)
     output_data([df_full], df)
-    df = unique(df)
-    df = weightedscore(df)
+    df = unique(df, col)
+    df = weightedscore(df, col)
     df.to_csv(output + ".csv", index=False)
 
 def get_col_name():
