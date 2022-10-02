@@ -51,11 +51,7 @@ def process_data(df):
 
 def to_lowercase(df, option):
 	to_remove = [
-<<<<<<< HEAD
 		col1.unique_id,
-=======
-		"Unique Lead Assignment Number ",
->>>>>>> d218bb7ef7d918fab45489c0739fb5022c6ebc39
 		"Suspect Creation date by Lead Originator",
 		"Post Code",
 		"Main Phone #",

@@ -7,7 +7,7 @@ def main():
 	df = pd.read_excel('Sampledata_Comet_Allcolumns_updated28thAug.xlsx', sheet_name='Sample Records ')
 	
 	data = [df]
-	output(data, df)
+	output_data(data, df)
 
 def output_data(data, df):
 	# 'Company info', 'Sales', 'Contact info', 'Lead info', 'Lead scores'
