@@ -2,6 +2,11 @@ from tkinter import *
 from tkinter import ttk
 import pandas as pd
 
+def scrollbar(tree, root):
+    bar = Scrollbar(root, orient="horizontal", command=tree.xview)
+    bar.pack(side="bottom", fill=X)
+    tree.configure(xscrollcommand=bar.set)
+
 def show_result(df):
     win = Tk()
     win.title("Treeview Demo")
@@ -10,6 +15,7 @@ def show_result(df):
     for column in df.columns:
         columns.append(column.lower().strip())
     tree = ttk.Treeview(win, columns=columns, show="headings")
+    scrollbar(tree, win)
     for column in columns:
         tree.heading(column, text=column)
     for index, row in df.iterrows():
