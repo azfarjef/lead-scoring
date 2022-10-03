@@ -16,12 +16,11 @@ weight7 = 0.2   # contact person designation
 
 
 def industry(index, row, df, col):
-    if row[col["industry"]].lower() == "consumer" or row[col["industry"]].lower() == "retail":
+    if row[col["industry"]].lower().strip() in ["consumer", "retail"]:
         df.at[index, col["score"]] += weight1 * 100
-    elif row[col["industry"]].lower() == "chemical and energy" or row[col["industry"]].lower() == "technology" or row[col["industry"]].lower() == "service logistics" \
-            or row[col["industry"]].lower() == "manufacturing" or row[col["industry"]].lower() == "distributor":
+    elif row[col["industry"]].lower().strip() in ["chemical and energy", "technology", "service logistics", "manufacturing", "distributor"]:
         df.at[index, col["score"]] += weight1 * 80
-    elif row[col["industry"]].lower() == "life sciences and healthcare":
+    elif row[col["industry"]].lower() in ["life sciences and healthcare"]:
         df.at[index, col["score"]] += weight1 * 60
     else:
         df.at[index, col["score"]] += weight1 * 40
@@ -55,30 +54,29 @@ def revenue(index, row, df, col):
         df.at[index, col["score"]] += weight4 * 20
 
 def channel(index, row, df, col):
-    if row[col["physical_channel"]].lower() == "b2b":
+    if row[col["physical_channel"]].lower().strip() == "b2b":
         df.at[index, col["score"]] += weight5 * 100
-    elif row[col["physical_channel"]].lower() == "b2c":
+    elif row[col["physical_channel"]].lower().strip() == "b2c":
         df.at[index, col["score"]] += weight5 * 80
     else:
         df.at[index, col["score"]] += weight5 * -50
 
 def source(index, row, df, col):
-    if row[col["lead_source"]].lower() == "facebook" or row[col["lead_source"]].lower() == "twitter":
+    if row[col["lead_source"]].lower().strip() in ["facebook", "twitter"]:
         df.at[index, col["score"]] += weight6 * 70
-    elif row[col["lead_source"]].lower() == "ex database" or row[col["lead_source"]].lower() == "content blogs":
+    elif row[col["lead_source"]].lower().strip() in ["ex database", "content blogs"]:
         df.at[index, col["score"]] += weight6 * 50
-    elif row[col["lead_source"]].lower() == "signup pages" or row[col["lead_source"]].lower() == "exhibitions":
+    elif row[col["lead_source"]].lower().strip() in ["signup pages", "exhibition"]:
         df.at[index, col["score"]] += weight6 * 100
     else:
         df.at[index, col["score"]] += weight6 * -10
 
 def designation(index, row, df, col):
-    if row[col["contact_designation"]].lower() == "ceo" or row[col["contact_designation"]].lower() == "sales" or row[col["contact_designation"]].lower() == "director" \
-        or row[col["contact_designation"]].lower() == "logistics":
+    if row[col["contact_designation"]].lower().strip() in ["ceo", "sales", "director", "logistics"]:
         df.at[index, col["score"]] += weight7 * 100
-    elif row[col["contact_designation"]].lower() == "executive" or row[col["contact_designation"]].lower() == "secretary":
+    elif row[col["contact_designation"]].lower().strip() in ["executive", "secretary"]:
         df.at[index, col["score"]] += weight7 * 80
-    elif row[col["contact_designation"]].lower() == "technician":
+    elif row[col["contact_designation"]].lower().strip() in ["technician"]:
         df.at[index, col["score"]] += weight7 * 50
     else:
         df.at[index, col["score"]] += weight7 * 0
