@@ -25,6 +25,10 @@ def industry(index, row, df, col):
     else:
         df.at[index, col["score"]] += weight1 * 40
 
+# def get_score(name, ):
+#     for key in info:
+#         if row[col[name]].lower().strip() == col[]
+
 def last_created(index, row, df, col):
     if row["Last Created"] < 10:
         df.at[index, col["score"]] += weight2 * 100
@@ -96,7 +100,8 @@ def negative_score(index, row, df, col):
 def scores(df, col):
     for index, row in df.iterrows():
         if pd.isna(row[col["score"]]):
-            df.at[index, col["score"]] = 0
+            df[col["score"]] = df[col["score"]].astype(float)
+            print(type(row[col["score"]]))
             if col["industry"] in df.columns:
                 if not pd.isna(row[col["industry"]]):
                     industry(index, row, df, col)
@@ -167,6 +172,7 @@ def weightedscore(df, col):
     scores(df, col)
     margin(df, col)
     df = put_last(df, col)
+    print(df)
     sorted_df = df.sort_values(col["score"], ascending=False)
     return (sorted_df)
     

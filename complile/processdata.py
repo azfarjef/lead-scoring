@@ -11,15 +11,18 @@ def main():
 def process_data(df, col):
 	df.index = range(len(df))
 
+	if 'Options' in df.columns.values.tolist():
+		df = df.drop('Options', axis=1)
+
 	print("\nOriginal Data---------------------------------------------------------------------------")
 	print(df)
 
-	df = to_lowercase(df, col)
+	df = to_lowercase(df, col, 1)
 
 	print("\nto_lowercase---------------------------------------------------------------------------")
 	print(df)
 	
-	df = clean_partial_duplicates(df)
+	df = clean_partial_duplicates(df, col)
 
 	print("\nclean_partial_duplicates---------------------------------------------------------------------------")
 	print(df)
@@ -43,7 +46,7 @@ def process_data(df, col):
 	return (df, df_full)
 
 
-def to_lowercase(df, col):
+def to_lowercase(df, col, option):
 	to_remove = [
 		col["unique_id"],
 		col["created_date"],
@@ -54,14 +57,23 @@ def to_lowercase(df, col):
 		col["website"],
 		col["ssm_no"],
 		col["revenue"],
-		col["employee_count"]
+		col["employee_count"],
+		col["source_type"],
+		col["score"]
 	]
 	fields = exclude_field(df, to_remove)
 	for field in fields:
 		df[field] = df[field].astype(str)
-		df[field] = df[field].str.lower()
-	df.replace(r'nan', np.nan, regex=True, inplace=True)
-	# df.fillna('thisnanwillreplaceback').apply(lambda x :x.str.lower()).replace('thisnanwillreplaceback',np.nan)
+		if option == 1:
+			df[field] = df[field].str.lower()
+			df[field] = df[field].str.strip()
+		else:
+			df[field] = df[field].str.title()
+	if option == 1:
+		df.replace(r'^nan$', np.nan, regex=True, inplace=True)
+	else:
+		df.replace(r'^Nan$', np.nan, regex=True, inplace=True)
+
 	return (df)
 
 def sort_by_name(df, col):

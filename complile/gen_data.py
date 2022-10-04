@@ -8,6 +8,7 @@ from unique_gen import unique
 def gen_data(sources, output):
     col = get_col_name()
     df = merge_data(sources, output)
+    # df.to_csv("aftermerge.csv", index=False)
     print(df.columns)
     df, df_full = process_data(df, col)
     output_data([df_full], df)

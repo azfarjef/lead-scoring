@@ -7,23 +7,37 @@ def main():
 	df = clean_partial_duplicates(df)
 	print(df)
 
-def clean_partial_duplicates(df):
+def clean_partial_duplicates(df, col):
 	df['real_id'] = find_partitions(
+		col,
 		df=df,
-		match_func=similar
+		match_func=similar,
 	)
 
 	print("\nAssign id for partial_duplicates--------------------------------------------------")
 	print(df)
 
+	to_remove = [
+			col["unique_id"],
+			col["source_type"],
+			col["score"]
+		]
+	fields = exclude_field(df, to_remove)
+
 	df = df.replace(r'^\s+$', np.nan, regex=True)
-	df["tmp"] = df[df.columns.values.tolist()].isna().sum(1)
+	df["tmp"] = df[fields].isna().sum(1)
 	df = df.sort_values(by="tmp").drop(columns="tmp")
-	df = df.drop_duplicates(subset=["real_id"], keep="first")
+
+	df = (
+		df.groupby("real_id", group_keys=False)
+		.apply(lambda x: x.ffill().bfill())
+		.drop_duplicates("real_id")
+	)
+
 	df = df.drop(columns="real_id")
 	return (df)
 
-def find_partitions(df, match_func, max_size=None, block_by=None):
+def find_partitions(col, df, match_func, max_size=None, block_by=None):
 	"""Recursive algorithm for finding duplicates in a DataFrame."""
 
 	# If block_by is provided, then we apply the algorithm to each block and
@@ -69,7 +83,7 @@ def find_partitions(df, match_func, max_size=None, block_by=None):
 			if get_record_index(r2) in partition or i == at:
 				continue
 
-			if match_func(r1, r2, df):
+			if match_func(r1, r2, df, col):
 				partition.add(get_record_index(r2))
 				indexes.append(i)
 				find_partition(at=i, partition=partition, indexes=indexes)
@@ -88,19 +102,26 @@ def find_partitions(df, match_func, max_size=None, block_by=None):
 		for idx in idxs
 	})
 
-def similar(one, two, df):
-	fields = df.columns.values.tolist()
-	fields.remove("Unique Lead Assignment Number ")
+def similar(one, two, df, col):
+	to_remove = [
+			col["unique_id"],
+			col["source_type"],
+			col["score"]
+		]
+	fields = exclude_field(df, to_remove)
 	ratio = 0
 	for field in fields:
 		ratio += fuzz.ratio(one[field], two[field])
 	ratio = ratio/len(fields)
-	# print(ratio)
-	return (ratio > 90)
-	# print(f"{one} {two} = {ratio}")
-	# ratio = fuzz.ratio(one['name'], two['name'])
-	# if (ratio > 80):
-	# 	print(ratio, one['no'], one['name'], two['no'], two['name'],)
+	if (ratio > 95):
+		print(f'{one[col["name"]]}, {two[col["name"]]} = {ratio}')
+	return (ratio > 95)
+
+def exclude_field(df, columns):
+	fields = df.columns.values.tolist()
+	for field in columns:
+		fields.remove(field)
+	return (fields)
 
 if __name__ == "__main__":
 	main()
