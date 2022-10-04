@@ -11,10 +11,10 @@ def gen_data(sources, output):
     # df.to_csv("aftermerge.csv", index=False)
     print(df.columns)
     df, df_full = process_data(df, col)
-    output_data([df_full], df)
     df = unique(df, col)
     df = weightedscore(df, col)
-    df.to_csv(output + ".csv", index=False)
+    output_data([df_full], df, output)
+    # df.to_csv(output + ".csv", index=False)
 
 def get_col_name():
     col = {

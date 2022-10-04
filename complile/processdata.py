@@ -38,6 +38,9 @@ def process_data(df, col):
 	print("\nclean_duplicates---------------------------------------------------------------------------")
 	print(df)
 
+	to_lowercase(df_full, col, 2)
+	df = to_lowercase(df, col, 2)
+
 	# df = output(data, df)
 
 	# print("\nextract columns---------------------------------------------------------------------------")

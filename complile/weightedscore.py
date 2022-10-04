@@ -100,6 +100,7 @@ def negative_score(index, row, df, col):
 def scores(df, col):
     for index, row in df.iterrows():
         if pd.isna(row[col["score"]]):
+            df.at[index, col["score"]] = 0
             df[col["score"]] = df[col["score"]].astype(float)
             print(type(row[col["score"]]))
             if col["industry"] in df.columns:

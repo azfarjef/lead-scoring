@@ -7,9 +7,9 @@ def main():
 	df = pd.read_excel('Sampledata_Comet_Allcolumns_updated28thAug.xlsx', sheet_name='Sample Records ')
 	
 	data = [df]
-	output(data, df)
+	output_data(data, df)
 
-def output_data(data, df):
+def output_data(data, df, output):
 	# 'Company info', 'Sales', 'Contact info', 'Lead info', 'Lead scores'
 	# column = [['Company info','Unique Lead Assignment Number ','Customer Name','Address Line 1','Address Line 2','City','State','Post Code','Industry','Physical Channel','Main Phone #','Website','SSM Number /Business Registration Number '],
 	# 	['Sales','Unique Lead Assignment Number ','Customer Name','Competitors','Total Potential Revenue/Month'],
@@ -46,7 +46,7 @@ def output_data(data, df):
 	
 	# print(len(data))
 	# print(data[1].columns.values.tolist())
-	save_xls(data, "output.xlsx", sheetName)
+	save_xls(data, output + ".xlsx", sheetName)
 
 	# print(df)
 
