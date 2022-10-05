@@ -28,7 +28,7 @@ def	main():
     df = pd.read_excel("/home/ssyazz/python/group/Scoring.xlsx", sheet_name = "b")
     f = new_unique_id(df)
     print(f)
-    print(type(f.at[1, col["unique_id"]]))
+    print(type(f.at[1]))#, col["unique_id"]]))
 
 if __name__ == "__main__":    
     main()
