@@ -1,12 +1,11 @@
 from tkinter import *
 from tkinter import messagebox
+from tkinter import filedialog
 import pandas as pd
 import sys
 
-test_df = None
-
 def collect_data(sources):
-    sources = [string.strip() for string in sources.split(",")]
+    sources = [string.strip() for string in sources.split(" ")]
     data = []
     i = 0
     while i < len(sources):
@@ -20,7 +19,10 @@ def find_and_merge(data):
         while i < len(data) - 1:
             if i == 0:
                 try:
-                    df1 = pd.read_csv(data[i])
+                    if data[i].endswith(".csv"):
+                        df1 = pd.read_csv(data[i])
+                    else:
+                        df1 = pd.read_excel(data[i])
                 except FileNotFoundError:
                     error = f"{data[i]} not found"
                     messagebox.showerror("Error", error)
@@ -28,7 +30,10 @@ def find_and_merge(data):
             else:
                 df1 = merged_df
             try:
-                df2 = pd.read_csv(data[i + 1])
+                if data[i + 1].endswith(".csv"):
+                    df2 = pd.read_csv(data[i + 1])
+                else:
+                    df2 = pd.read_excel(data[i + 1])
             except FileNotFoundError:
                 error = f"{data[i + 1]} not found"
                 messagebox.showerror("Error", error)
@@ -38,7 +43,10 @@ def find_and_merge(data):
             i += 1
     else:
         try:
-            merged_df = pd.read_csv(data[i])
+            if data[i].endswith(".csv"):
+                merged_df = pd.read_csv(data[i])
+            else:
+                merged_df = pd.read_excel(data[i])
         except FileNotFoundError:
             error = f"{data[i]} not found"
             messagebox.showerror("Error", error)
@@ -65,9 +73,30 @@ def merge_data(sources, output):
     except:
         return
     merged_df = drop_column(merged_df) 
-    #merged_df.to_csv(output + ".csv")
     return merged_df
 
 def clear_entry(entries):
     for entry in entries:
         entry.delete(0, END)
+
+def browse_file(fileEntry):
+    files = []
+    fileEntry.delete(0, END)
+    filename = filedialog.askopenfiles(initialdir="/", title="select files", filetypes=(("csv files", "*.csv*"), ("all files", "*.*")))
+    for file in filename:
+        files.append(file.name)
+    fileEntry.insert(0, files)
+    print(files)
+    return files
+
+def get_filename_from_path(path):
+    slash = path.count("/")
+    i = 0
+    j = 0
+    print(path)
+    while i < len(path):
+        if j == slash:
+            return path[i:]
+        if path[i] == "/":
+            j += 1
+        i += 1 
