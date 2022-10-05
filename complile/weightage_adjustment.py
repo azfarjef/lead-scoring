@@ -17,7 +17,7 @@ def get_industry():
     }
     column = []
     columns = []
-    cf = pd.read_excel("/home/ssyazz/python/group/weighted_adjustment.xlsx", sheet_name = "industry")
+    cf = pd.read_excel("data/weighted_adjustment.xlsx", sheet_name = "industry")
     for index, row in cf.iterrows():
         column.append(row["type"])
     for index, row in cf.iterrows():
@@ -35,7 +35,7 @@ def get_channel():
     }
     column = []
     columns = []
-    cf = pd.read_excel("/home/ssyazz/python/group/weighted_adjustment.xlsx", sheet_name = "physical_channel")
+    cf = pd.read_excel("data/weighted_adjustment.xlsx", sheet_name = "physical_channel")
     for index, row in cf.iterrows():
         column.append(row["type"])
     for index, row in cf.iterrows():
@@ -58,7 +58,7 @@ def get_source():
     }
     column = []
     columns = []
-    cf = pd.read_excel("/home/ssyazz/python/group/weighted_adjustment.xlsx", sheet_name = "lead_source")
+    cf = pd.read_excel("data/weighted_adjustment.xlsx", sheet_name = "lead_source")
     for index, row in cf.iterrows():
         column.append(row["type"])
     for index, row in cf.iterrows():
@@ -82,7 +82,7 @@ def get_designation():
     }
     column = []
     columns = []
-    cf = pd.read_excel("/home/ssyazz/python/group/weighted_adjustment.xlsx", sheet_name = "designation")
+    cf = pd.read_excel("data/weighted_adjustment.xlsx", sheet_name = "designation")
     for index, row in cf.iterrows():
         column.append(row["type"])
     for index, row in cf.iterrows():
