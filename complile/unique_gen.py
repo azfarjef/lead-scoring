@@ -4,11 +4,11 @@ import numpy as np
 def unique(df, col):
     # df.columns = map(str.lower, df.columns)
     if df[col["unique_id"]].replace(r'^\s*$', np.nan, regex=True).isna().all():
-        unique_id(df, col)
-        return df
+        df = unique_id(df, col)
+        return (df)
     else:
-        new_unique_id(df, col)
-        return df
+        df = new_unique_id(df, col)
+        return (df)
 
 def	unique_id(df, col):
     df[col["unique_id"]] = df.groupby([col["name"]]).ngroup()
@@ -21,7 +21,7 @@ def	new_unique_id(df, col):
     sorted_final = sorted.sort_values(by = [col["unique_id"], col["name"]])
     df = sorted_final
     df = df.astype({col["unique_id"] : "int"})
-    return(df)
+    return (df)
 
 def	main():
     #f = unique_id(df)
