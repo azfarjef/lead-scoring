@@ -20,7 +20,8 @@ def clean_partial_duplicates(df, col):
 	to_remove = [
 			col["unique_id"],
 			col["source_type"],
-			col["score"]
+			col["score"],
+			"Options"
 		]
 	fields = exclude_field(df, to_remove)
 
@@ -106,21 +107,30 @@ def similar(one, two, df, col):
 	to_remove = [
 			col["unique_id"],
 			col["source_type"],
-			col["score"]
+			col["score"],
+			"Options"
 		]
 	fields = exclude_field(df, to_remove)
 	ratio = 0
+	len = 0
 	for field in fields:
+		if " " == one[field] and " " == two[field]:
+			continue
 		ratio += fuzz.ratio(one[field], two[field])
-	ratio = ratio/len(fields)
-	if (ratio > 95):
+		len += 1
+	# ratio = ratio/len(fields)
+	if len == 0:
+		len = 1
+	ratio = ratio/len
+	if (ratio > 97) or one[col["name"]] == "ciena":
 		print(f'{one[col["name"]]}, {two[col["name"]]} = {ratio}')
-	return (ratio > 95)
+	return (ratio > 97)
 
 def exclude_field(df, columns):
 	fields = df.columns.values.tolist()
 	for field in columns:
-		fields.remove(field)
+		if field in fields:
+			fields.remove(field)
 	return (fields)
 
 if __name__ == "__main__":

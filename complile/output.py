@@ -11,13 +11,7 @@ def main():
 
 def output_data(data, df, output):
 	# 'Company info', 'Sales', 'Contact info', 'Lead info', 'Lead scores'
-	# column = [['Company info','Unique Lead Assignment Number ','Customer Name','Address Line 1','Address Line 2','City','State','Post Code','Industry','Physical Channel','Main Phone #','Website','SSM Number /Business Registration Number '],
-	# 	['Sales','Unique Lead Assignment Number ','Customer Name','Competitors','Total Potential Revenue/Month'],
-	# 	['Contact info','Unique Lead Assignment Number ','Customer Name','Contact Person Name ','Contact Person Email','Contact person Designation','Contact Person Phone'],
-	# 	['Lead info','Unique Lead Assignment Number ','Customer Name','Lead Source Name ','Lead Source Details , if any ','Suspect Creation date by Lead Originator ','Suspect Creation by Lead Originator Name ','Suspect Accepted By','Suspect Accepted At','Prospect Accepted By','Prospect Accepted At'],
-	# 	['Lead scores','Unique Lead Assignment Number ','Customer Name','Source Type','Lead Priority Level']
-	# 	]
-	with open('2erd_columns.csv', newline='', mode='r', encoding='utf-8-sig') as f:
+	with open('data/output_columns.csv', newline='', mode='r', encoding='utf-8-sig') as f:
 		reader = csv.reader(f)
 		column = list(reader)
 	unique_column = df.columns.values.tolist()

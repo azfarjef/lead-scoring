@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from fuzzyduplicates import clean_partial_duplicates
+from unique_gen import unique
 
 def main():
 	pd.set_option('display.max_columns', 30)
@@ -17,6 +18,7 @@ def process_data(df, col):
 	print("\nOriginal Data---------------------------------------------------------------------------")
 	print(df)
 
+	df = df[df[col["name"]].notna()]
 	df = to_lowercase(df, col, 1)
 
 	print("\nto_lowercase---------------------------------------------------------------------------")
@@ -28,10 +30,12 @@ def process_data(df, col):
 	print(df)
 
 	df = sort_by_name(df, col)
-	df_full = df.copy()
 
 	print("\nsort_by_name---------------------------------------------------------------------------")
 	print(df)
+
+	df = unique(df, col)
+	df_full = df.copy()
 
 	df = clean_duplicates(df, col)
 
@@ -109,7 +113,8 @@ def clean_duplicates(df, col):
 def exclude_field(df, columns):
 	fields = df.columns.values.tolist()
 	for field in columns:
-		fields.remove(field)
+		if field in fields:
+			fields.remove(field)
 	return (fields)
 
 if __name__ == "__main__":

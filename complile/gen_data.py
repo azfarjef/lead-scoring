@@ -11,7 +11,7 @@ def gen_data(sources, output):
     # df.to_csv("aftermerge.csv", index=False)
     print(df.columns)
     df, df_full = process_data(df, col)
-    df = unique(df, col)
+    # df = unique(df, col)
     df = weightedscore(df, col)
     output_data([df_full], df, output)
     # df.to_csv(output + ".csv", index=False)
@@ -56,3 +56,5 @@ def get_col_name():
         col[key] = columns[i]
 
     return col
+
+# gen_data("data/D.csv data/E.csv", "results")
