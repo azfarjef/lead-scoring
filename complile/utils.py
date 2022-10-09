@@ -6,21 +6,25 @@ import sys
 
 def collect_data(sources):
     sources = [string.strip() for string in sources.split(" ")]
+    return sources
+    """
     data = []
     i = 0
     while i < len(sources):
         data.append(sources[i])
         i += 1
     return data
+    """
 
-def find_and_merge(data):
+def find_and_merge(data, col):
     i = 0
     if len(data) > 1:
         while i < len(data) - 1:
             if i == 0:
                 try:
                     if data[i].endswith(".csv"):
-                        df1 = pd.read_csv(data[i])
+                        #df1 = pd.read_csv(data[i])
+                        df1 = pd.read_csv(data[i], parse_dates=True, dayfirst=True)
                     else:
                         df1 = pd.read_excel(data[i])
                 except FileNotFoundError:
@@ -31,7 +35,8 @@ def find_and_merge(data):
                 df1 = merged_df
             try:
                 if data[i + 1].endswith(".csv"):
-                    df2 = pd.read_csv(data[i + 1])
+                    #df2 = pd.read_csv(data[i + 1])
+                    df2 = pd.read_csv(data[i], parse_dates=True, dayfirst=True)
                 else:
                     df2 = pd.read_excel(data[i + 1])
             except FileNotFoundError:
@@ -45,11 +50,13 @@ def find_and_merge(data):
         try:
             if data[i].endswith(".csv"):
                 merged_df = pd.read_csv(data[i])
+                #merged_df = pd.read_csv(data[i], parse_dates=col["created_date"], dayfirst=True)
             else:
                 merged_df = pd.read_excel(data[i])
         except FileNotFoundError:
             error = f"{data[i]} not found"
             messagebox.showerror("Error", error)
+    print(merged_df)
     return merged_df
 
 def drop_column(merged_df):
@@ -66,10 +73,10 @@ def drop_column(merged_df):
         print(f"merged_df = {merged_df}")
     return merged_df
     
-def merge_data(sources, output):
+def merge_data(sources, output, col):
     data = collect_data(sources)
     try:
-        merged_df = find_and_merge(data)
+        merged_df = find_and_merge(data, col)
     except:
         return
     merged_df = drop_column(merged_df) 

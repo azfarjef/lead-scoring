@@ -13,7 +13,7 @@ def show_result(df):
 
     columns = []
     for column in df.columns:
-        columns.append(column.lower().strip())
+        columns.append(column.strip())
     tree = ttk.Treeview(win, columns=columns, show="headings")
     scrollbar(tree, win)
     for column in columns:
