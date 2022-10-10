@@ -1,7 +1,7 @@
 import pandas as pd
 from margin import margin
 from unique_gen import unique
-from weightage_adjustment import get_channel, get_designation, get_industry, get_source
+from weightage_adjustment import get_channel, get_designation, get_industry, get_source, get_negative
 from weighted_utils import cleaning, str_to_dec, diff_date, put_last
 
 weight1 = 0.3   # Industry
@@ -17,6 +17,13 @@ def get_score(row, name, cols):
         if row[name].lower().strip() == value[0].lower().strip():
             return(value[1])
     return(0)
+
+def get_scores(row, name, cols):
+    for key, value in cols.items():
+        if not pd.isna(row[name]) and key == "competitor":
+            return(value[1])
+        if pd.isna(row[name]) and key == "no_competitor":
+            return(value[1])
 
 def industry(index, row, df, col):
     if col["industry"] in df.columns:
@@ -91,10 +98,13 @@ def designation(index, row, df, col):
             df.at[index, col["score"]] += cols["weightage"][1] * 0
 
 def negative_score(index, row, df, col):
+    cols = get_negative()
     if not pd.isna(row[col["competitor"]]):
-        df.at[index, col["score"]] += 1 * -100
+        score = get_scores(row, col["competitor"], cols)
+        df.at[index, col["score"]] += cols["weightage"][1] * score
     else:
-        df.at[index, col["score"]] += 1 * 0
+        score = get_scores(row, col["competitor"], cols)
+        df.at[index, col["score"]] += cols["weightage"][1] * score
     if not pd.isna(row[col["contact_email"]]) and not pd.isna(row[col["contact_phone"]]):
         df.at[index, col["score"]] += 1 * 0
     elif pd.isna(row[col["contact_email"]]) and pd.isna(row[col["contact_phone"]]):

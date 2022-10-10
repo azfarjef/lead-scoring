@@ -91,3 +91,21 @@ def get_designation():
     for i, key in enumerate(col):
         col[key] = [column[i], columns[i]]
     return col
+
+def get_negative():
+    col = {
+        "weightage": ["", ""],
+        "competitor": ["", ""],
+        "no_competitor": ["", ""]
+    }
+    column = []
+    columns = []
+    cf = pd.read_excel("data/weighted_adjustment.xlsx", sheet_name = "negative_score")
+    for index, row in cf.iterrows():
+        column.append(row["type"])
+    for index, row in cf.iterrows():
+        columns.append(row["numeric"])
+    
+    for i, key in enumerate(col):
+        col[key] = [column[i], columns[i]]
+    return col
