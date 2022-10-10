@@ -2,7 +2,7 @@ import pandas as pd
 from margin import margin
 from unique_gen import unique
 from weightage_adjustment import get_channel, get_designation, get_industry, get_source
-from weighted_utils import str_to_dec, diff_date
+from weighted_utils import cleaning, str_to_dec, diff_date, put_last
 
 weight1 = 0.3   # Industry
 weight2 = 0.15  # Suspect creation date
@@ -126,20 +126,6 @@ def scores(df, col):
             source(index, row, df, col)
             designation(index, row, df, col)
             negative_score(index, row, df, col)
-
-def cleaning(df):
-    df.reset_index(inplace=True)
-    if 'Unnamed: 0' in df.columns:
-        df = df.drop('Unnamed: 0', axis = 1)
-    if 'index' in df.columns:
-        df = df.drop('index', axis = 1)
-    return (df)
-
-def put_last(df, col):
-    cols_at_end = [col["source_type"], col["score"]]
-    df = df[[c for c in df if c not in cols_at_end]
-            + [c for c in cols_at_end if c in df]]
-    return (df)
 
 def weightedscore(df, col):
     df = cleaning(df)
