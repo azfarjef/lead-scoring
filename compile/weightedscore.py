@@ -1,10 +1,8 @@
 import pandas as pd
-from re import sub
-from decimal import Decimal
-from datetime import date
 from margin import margin
 from unique_gen import unique
 from weightage_adjustment import get_channel, get_designation, get_industry, get_source
+from weighted_utils import str_to_dec, diff_date
 
 weight1 = 0.3   # Industry
 weight2 = 0.15  # Suspect creation date
@@ -146,18 +144,11 @@ def put_last(df, col):
 def weightedscore(df, col):
     df = cleaning(df)
     # change the variable inside revenue column from str to decimal
-    curr = [] * len(df.index)
-    for index, row in df.iterrows():
-        if isinstance(row[col["revenue"]], str) and not pd.isna(row[col["revenue"]]):
-            curr = df.at[index, col["revenue"]]
-            value = Decimal(sub(r'[^\d.]', '', curr))
-            df.at[index, col["revenue"]] = value
-    # insert a new column for current date
-    today_date = date.today()
-    df.insert(3, 'Today Date', today_date)
-    # insert a new column for difference between current and suspect created date
-    diff = (pd.to_datetime(df["Today Date"]) - pd.to_datetime(df[col["created_date"]])).dt.days
-    df.insert(5, "Last Created", diff)
+    df = str_to_dec(df, col["revenue"])
+    df = str_to_dec(df, col["employee_count"])
+    df = str_to_dec(df, col["created_date"])
+    # insert a new column for current date and calculate the difference with last_created
+    diff_date(df, col)
     # scoring
     scores(df, col)
     margin(df, col)
