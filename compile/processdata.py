@@ -87,6 +87,8 @@ def sort_by_name(df, col):
 	to_remove = [
 			col["unique_id"]
 		]
+	print("HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
+	print(df[col["name"]])
 	fields = exclude_field(df, to_remove)
 	i = fields.index(col["name"])
 	fields.insert(0, fields.pop(i))

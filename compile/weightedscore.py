@@ -142,7 +142,7 @@ def weightedscore(df, col):
     # change the variable inside revenue column from str to decimal
     df = str_to_dec(df, col["revenue"])
     df = str_to_dec(df, col["employee_count"])
-    df = str_to_dec(df, col["created_date"])
+    # df = str_to_dec(df, col["created_date"])
     # insert a new column for current date and calculate the difference with last_created
     diff_date(df, col)
     # scoring

@@ -51,19 +51,19 @@ def grid_widget(widgets):
     widgets[0].grid(sticky=W, row=0, columnspan=2, padx=5)
     widgets[1].grid(sticky=E, row=1, padx=5)
     widgets[2].grid(sticky=E, row=2, padx=5)
-    """
+
     widgets[3].grid(sticky=W, row=5, columnspan=2) 
     widgets[4].grid(sticky=E, row=6, padx=5)
     #widgets[5].grid(sticky=E, row=7, padx=5)
-    """
+
     widgets[5].grid(row=1, column=1, pady=5, padx=3)
     widgets[6].grid(row=2, column=1, pady=5, padx=3)
-    """
+
     widgets[7].grid(row=6, column=1, pady=5, padx=3)
     #widgets[9].grid(row=7, column=1, pady=5, padx=3)
-    """
+
     widgets[8].grid(sticky=E, row=3, columnspan=2)
-    """
+
     widgets[9].grid(sticky=E, row=7, columnspan=2)
     widgets[10].grid(sticky=E, row=7, column=0) 
-    """
+
