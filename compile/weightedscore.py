@@ -1,7 +1,7 @@
 import pandas as pd
 from margin import margin
 from unique_gen import unique
-from weightage_adjustment import get_channel, get_designation, get_industry, get_source, get_negative
+from weightage_adjustment import get_info
 from weighted_utils import cleaning, str_to_dec, diff_date, put_last
 
 weight2 = 0.15  # Suspect creation date
@@ -20,13 +20,13 @@ def get_scores(row, name, cols):
     for key, value in cols.items():
         if not pd.isna(row[name]) and key == "competitor":
             return (value[1])
-        if pd.isna(row[name]) and key == "no_competitor":
+        if pd.isna(row[name]) and key == "no competitor":
             return (value[1])
     return (0)
 
-def industry(index, row, df, col):
+def industry(index, row, df, col, cols):
     if col["industry"] in df.columns:
-        cols = get_industry()
+        # cols = get_industry()
         if not pd.isna(row[col["industry"]]):
             score = get_score(row, col["industry"], cols)
             if (score == 0):
@@ -63,9 +63,9 @@ def revenue(index, row, df, col):
     else:
         df.at[index, col["score"]] += weight4 * 20
 
-def channel(index, row, df, col):
+def channel(index, row, df, col, cols):
     if col["physical_channel"] in df.columns:
-        cols = get_channel()
+        # cols = get_channel()
         if not pd.isna(row[col["physical_channel"]]):
             score = get_score(row, col["physical_channel"], cols)
             if (score == 0):
@@ -74,9 +74,9 @@ def channel(index, row, df, col):
         else:
             df.at[index, col["score"]] += cols["weightage"][1] * 0
 
-def source(index, row, df, col):
+def source(index, row, df, col, cols):
     if col["lead_source"] in df.columns:
-        cols = get_source()
+        # cols = get_source()
         if not pd.isna(row[col["lead_source"]]):
             score = get_score(row, col["lead_source"], cols)
             if (score == 0):
@@ -85,9 +85,9 @@ def source(index, row, df, col):
         else:
             df.at[index, col["score"]] += cols["weightage"][1] * 0
 
-def designation(index, row, df, col):
+def designation(index, row, df, col, cols):
     if col["contact_designation"] in df.columns:
-        cols = get_designation()
+        # cols = get_designation()
         if not pd.isna(row[col["contact_designation"]]):
             score = get_score(row, col["contact_designation"], cols)
             if (score == 0):
@@ -96,8 +96,8 @@ def designation(index, row, df, col):
         else:
             df.at[index, col["score"]] += cols["weightage"][1] * 0
 
-def negative_score(index, row, df, col):
-    cols = get_negative()
+def negative_score(index, row, df, col, cols):
+    # cols = get_negative()
     if not pd.isna(row[col["competitor"]]):
         score = get_scores(row, col["competitor"], cols)
         df.at[index, col["score"]] += cols["weightage"][1] * score
@@ -112,10 +112,15 @@ def negative_score(index, row, df, col):
         df.at[index, col["score"]] += 1 * -10
 
 def scores(df, col):
+    cols_industry = get_info("industry")
+    cols_channel = get_info("physical_channel")
+    cols_source = get_info("lead_source")
+    cols_designation = get_info("designation")
+    cols_negative = get_info("negative_score")
     for index, row in df.iterrows():
         if pd.isna(row[col["score"]]):
             df.at[index, col["score"]] = 0
-            industry(index, row, df, col)
+            industry(index, row, df, col, cols_industry)
             if "Last Created" in df.columns:
                 if not pd.isna(row["Last Created"]):
                    last_created(index, row, df, col)
@@ -131,10 +136,10 @@ def scores(df, col):
                     revenue(index, row, df, col)
                 else:
                     df.at[index, col["score"]] += weight4 * 0
-            channel(index, row, df, col)
-            source(index, row, df, col)
-            designation(index, row, df, col)
-            negative_score(index, row, df, col)
+            channel(index, row, df, col, cols_channel)
+            source(index, row, df, col, cols_source)
+            designation(index, row, df, col, cols_designation)
+            negative_score(index, row, df, col, cols_negative)
 
 def weightedscore(df, col):
     df = cleaning(df)
@@ -151,7 +156,7 @@ def weightedscore(df, col):
     print(df)
     sorted_df = df.sort_values(col["score"], ascending=False)
     return (sorted_df)
-    
+
 def main():
     df = pd.read_csv(
         "/home/ssyazz/python/group/merge.csv")
