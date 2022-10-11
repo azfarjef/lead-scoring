@@ -4,26 +4,25 @@ from unique_gen import unique
 from weightage_adjustment import get_channel, get_designation, get_industry, get_source, get_negative
 from weighted_utils import cleaning, str_to_dec, diff_date, put_last
 
-weight1 = 0.3   # Industry
 weight2 = 0.15  # Suspect creation date
 weight3 = 0.1   # Employee count
 weight4 = 0.1   # Total potential revenue
-weight5 = 0.05  # Physical channel
-weight6 = 0.1   # Lead source
-weight7 = 0.2   # contact person designation
 
 def get_score(row, name, cols):
     for key, value in cols.items():
         if row[name].lower().strip() == value[0].lower().strip():
-            return(value[1])
-    return(0)
+            return (value[1])
+        elif not pd.isna(row[name]) and key == "else":
+            return (value[1])
+    return (0)
 
 def get_scores(row, name, cols):
     for key, value in cols.items():
         if not pd.isna(row[name]) and key == "competitor":
-            return(value[1])
+            return (value[1])
         if pd.isna(row[name]) and key == "no_competitor":
-            return(value[1])
+            return (value[1])
+    return (0)
 
 def industry(index, row, df, col):
     if col["industry"] in df.columns:
