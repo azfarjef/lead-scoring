@@ -27,7 +27,7 @@ def str_to_dec(df, col):
 def diff_date(df, col):
     today_date = date.today()
     df.insert(3, 'Today Date', today_date)
-    diff = (pd.to_datetime(df["Today Date"]) - pd.to_datetime(df[col["created_date"]])).dt.days
+    diff = (pd.to_datetime(df["Today Date"], dayfirst = True) - pd.to_datetime(df[col["created_date"]], dayfirst = True)).dt.days
     df.insert(5, "Last Created", diff)
 
 def put_last(df, col):
