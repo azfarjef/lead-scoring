@@ -42,6 +42,9 @@ def output_data(data, df, output):
 	# print(data[1].columns.values.tolist())
 	save_xls(data, output + ".xlsx", sheetName)
 
+        # added for search function
+	save_xls(data, "output_backup.xlsx", sheetName)
+
 	# print(df)
 
 # Extract certain column from dataframe

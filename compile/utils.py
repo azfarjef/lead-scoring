@@ -82,7 +82,7 @@ def clear_entry(entries):
 def browse_file(fileEntry):
     files = []
     fileEntry.delete(0, END)
-    filename = filedialog.askopenfiles(initialdir="/", title="select files", filetypes=(("csv files", "*.csv*"), ("all files", "*.*")))
+    filename = filedialog.askopenfiles(initialdir="/", title="select files", filetypes=(("all files", "*.*"), ("excel files", "*xlsx"), ("csv files", "*csv")))
     for file in filename:
         files.append(file.name)
     fileEntry.insert(0, files)

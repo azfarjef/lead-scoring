@@ -16,14 +16,15 @@ def read_data(sheet):
     if sheet == "All":
         sheet = "Master data"
     try:
-        df = pd.read_excel("results.xlsx", sheet_name=sheet)
+        df = pd.read_excel("output_backup.xlsx", sheet_name=sheet)
     except FileNotFoundError:
         messagebox.showerror("Error", "master output not found")
     return df
 
 def find_and_merge_data(entry, df, ret_df):
     if entry.isdigit():
-        entry = entry + ".0"
+        print("hellooooooooooooooooooooooo")
+        #entry = entry + ".0"
         for index, row in df.iterrows():
             if entry == str(row["Unique Lead Assignment Number "]):
                 temp = df.iloc[[index], :]
@@ -53,7 +54,7 @@ def search(entry, options_list):
     ret_df = pd.DataFrame(columns=["Customer Name"])
     try:
         #df = read_data(options_list)
-        df = pd.read_excel("results.xlsx", sheet_name="Master data")
+        df = pd.read_excel("output_backup.xlsx", sheet_name="Master data")
         temp_df = read_data(options_list) # temp_df to get columns
     except:
         messagebox.showerror("Error", f"{options_list} not found")
