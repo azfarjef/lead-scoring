@@ -48,6 +48,9 @@ def contact_scores(row, name, col, cols):
                 else:
                     val = int(float(null[1]))
                     return (val)
+            else:
+                val = int(float(null[1]))
+                return (val)
         elif not pd.isna(row[col["contact_email"]]):
             val = int(float(phone[1]))
             return (val)
