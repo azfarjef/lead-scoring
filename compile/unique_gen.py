@@ -20,7 +20,8 @@ def new_unique_id_small(df, col):
     return (sorted)
 
 def	new_unique_id(df, col):
-    df_drop_dup = df.drop_duplicates(subset = [col["unique_id"], col["name"]], keep = 'last').reset_index(drop = True)
+    df = df.sort_values(by = [col["unique_id"], col["name"]])
+    df_drop_dup = df.drop_duplicates(subset = [col["unique_id"], col["name"]], keep = 'first').reset_index(drop = True)
     duplicates = df.loc[df.duplicated(subset = [col["unique_id"], col["name"]])]
     sorted = new_unique_id_small(df_drop_dup, col)
     frames = [sorted, duplicates]

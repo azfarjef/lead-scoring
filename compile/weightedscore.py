@@ -12,7 +12,7 @@ def get_score(row, name, cols):
     for key, value in cols.items():
         if row[name].lower().strip() == value[0].lower().strip():
             return (value[1])
-        elif not pd.isna(row[name]) and key == "else":
+        elif not pd.isna(row[name]) and value[0].lower().strip() == "else":
             return (value[1])
     return (0)
 
@@ -29,8 +29,6 @@ def industry(index, row, df, col, cols):
         # cols = get_industry()
         if not pd.isna(row[col["industry"]]):
             score = get_score(row, col["industry"], cols)
-            if (score == 0):
-                score = 40
             df.at[index, col["score"]] += cols["weightage"][1] * score
         else:
             df.at[index, col["score"]] += cols["weightage"][1] * 0
