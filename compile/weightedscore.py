@@ -24,9 +24,9 @@ def get_score(row, name, cols):
     return (0)
 
 def contact_scores(row, name, col, cols):
-    full = np.array(cols.get("Have both contact info"))
+    full = np.array(cols.get("Have both"))
     phone = np.array(cols.get("Null phone no."))
-    null = np.array(cols.get("No contact info"))
+    null = np.array(cols.get("All Null"))
     email = np.array(cols.get("Null email"))
     if full[1] != "nan" and phone[1] != "nan" and null[1] != "nan" and email[1] != "nan":
         if not pd.isna(row[name]):
@@ -48,6 +48,9 @@ def contact_scores(row, name, col, cols):
                 else:
                     val = int(float(null[1]))
                     return (val)
+        elif not pd.isna(row[col["contact_email"]]):
+            val = int(float(phone[1]))
+            return (val)
         else:
             val = int(float(null[1]))
             return (val)
