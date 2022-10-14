@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+import re
 from margin import margin
 from unique_gen import unique
 from weightage_adjustment import get_info
@@ -9,24 +11,50 @@ weight3 = 0.1   # Employee count
 weight4 = 0.1   # Total potential revenue
 
 def get_score(row, name, cols):
+    other = dict((k, cols[k]) for k in ['Others']
+        if k in cols)
     for key, value in cols.items():
         if row[name].lower().strip() == value[0].lower().strip():
             return (value[1])
-        elif not pd.isna(row[name]) and value[0].lower().strip() == "else":
-            return (value[1])
+    other = np.array(other.get("Others"))
+    if not pd.isna(other).all():
+        if not pd.isna(row[name]) and other[0] == "Others":
+            val = int(float(other[1]))
+            return (val)
     return (0)
 
-def get_scores(row, name, cols):
-    for key, value in cols.items():
-        if not pd.isna(row[name]) and key == "competitor":
-            return (value[1])
-        if pd.isna(row[name]) and key == "no competitor":
-            return (value[1])
+def contact_scores(row, name, col, cols):
+    full = np.array(cols.get("Have both contact info"))
+    phone = np.array(cols.get("Null phone no."))
+    null = np.array(cols.get("No contact info"))
+    email = np.array(cols.get("Null email"))
+    if full[1] != "nan" and phone[1] != "nan" and null[1] != "nan" and email[1] != "nan":
+        if not pd.isna(row[name]):
+            row[name] = str(row[name])
+            if ("-" in row[name] or "+" in row[name] or '"' in row[name] or re.search(r'\d', row[name])) and not pd.isna(row[col["contact_email"]]):
+                if len(row[name]) >= 8 and len(row[name]) <= 17:
+                    val = int(float(full[1]))
+                    return (val)
+                else:
+                    val = int(float(phone[1]))
+                    return (val)
+            elif not pd.isna(row[col["contact_email"]]):
+                val = int(float(phone[1]))
+                return (val)
+            elif ("-" in row[name] or "+" in row[name] or '"' in row[name] or re.search(r'\d', row[name])) and pd.isna(row[col["contact_email"]]):
+                if len(row[name]) >= 8 and len(row[name]) <= 17:
+                    val = int(float(email[1]))
+                    return (val)
+                else:
+                    val = int(float(null[1]))
+                    return (val)
+        else:
+            val = int(float(null[1]))
+            return (val)
     return (0)
 
 def industry(index, row, df, col, cols):
     if col["industry"] in df.columns:
-        # cols = get_industry()
         if not pd.isna(row[col["industry"]]):
             score = get_score(row, col["industry"], cols)
             df.at[index, col["score"]] += cols["weightage"][1] * score
@@ -72,48 +100,48 @@ def channel(index, row, df, col, cols):
         else:
             df.at[index, col["score"]] += cols["weightage"][1] * 0
 
+def channel(index, row, df, col, cols):
+    if col["physical_channel"] in df.columns:
+        if not pd.isna(row[col["physical_channel"]]):
+            score = get_score(row, col["physical_channel"], cols)
+            df.at[index, col["score"]] += cols["weightage"][1] * score
+        else:
+            df.at[index, col["score"]] += cols["weightage"][1] * 0
+
 def source(index, row, df, col, cols):
     if col["lead_source"] in df.columns:
-        # cols = get_source()
         if not pd.isna(row[col["lead_source"]]):
             score = get_score(row, col["lead_source"], cols)
-            if (score == 0):
-                score = -10
             df.at[index, col["score"]] += cols["weightage"][1] * score
         else:
             df.at[index, col["score"]] += cols["weightage"][1] * 0
 
 def designation(index, row, df, col, cols):
     if col["contact_designation"] in df.columns:
-        # cols = get_designation()
         if not pd.isna(row[col["contact_designation"]]):
             score = get_score(row, col["contact_designation"], cols)
-            if (score == 0):
-                score = 0
+            df.at[index, col["score"]] += cols["weightage"][1] * score
+        else:
+            df.at[index, col["score"]] += cols["weightage"][1] * 0
+            
+def competitor(index, row, df, col, cols):
+    if col["competitor"] in df.columns:
+        if not pd.isna(row[col["competitor"]]):
+            score = get_score(row, col["competitor"], cols)
             df.at[index, col["score"]] += cols["weightage"][1] * score
         else:
             df.at[index, col["score"]] += cols["weightage"][1] * 0
 
 def negative_score(index, row, df, col, cols):
-    # cols = get_negative()
-    if not pd.isna(row[col["competitor"]]):
-        score = get_scores(row, col["competitor"], cols)
-        df.at[index, col["score"]] += cols["weightage"][1] * score
-    else:
-        score = get_scores(row, col["competitor"], cols)
-        df.at[index, col["score"]] += cols["weightage"][1] * score
-    if not pd.isna(row[col["contact_email"]]) and not pd.isna(row[col["contact_phone"]]):
-        df.at[index, col["score"]] += 1 * 0
-    elif pd.isna(row[col["contact_email"]]) and pd.isna(row[col["contact_phone"]]):
-        df.at[index, col["score"]] += 1 * -20
-    else:
-        df.at[index, col["score"]] += 1 * -10
+    score = contact_scores(row, col["contact_phone"], col, cols)
+    df.at[index, col["score"]] += cols["weightage"][1] * score
 
 def scores(df, col):
     cols_industry = get_info("industry")
     cols_channel = get_info("physical_channel")
     cols_source = get_info("lead_source")
     cols_designation = get_info("designation")
+    cols_competitor = get_info("competitor")
     cols_negative = get_info("negative_score")
     for index, row in df.iterrows():
         if pd.isna(row[col["score"]]):
@@ -121,7 +149,7 @@ def scores(df, col):
             industry(index, row, df, col, cols_industry)
             if "Last Created" in df.columns:
                 if not pd.isna(row["Last Created"]):
-                   last_created(index, row, df, col)
+                    last_created(index, row, df, col)
                 else:
                     df.at[index, col["score"]] += weight2 * 0
             if col["employee_count"] in df.columns:
@@ -137,6 +165,7 @@ def scores(df, col):
             channel(index, row, df, col, cols_channel)
             source(index, row, df, col, cols_source)
             designation(index, row, df, col, cols_designation)
+            competitor(index, row, df, col, cols_competitor)
             negative_score(index, row, df, col, cols_negative)
 
 def weightedscore(df, col):
