@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from fuzzyduplicates import clean_partial_duplicates
 from unique_gen import unique
+from weightedscore import weightedscore
 
 def main():
 	pd.set_option('display.max_columns', 30)
@@ -25,11 +26,13 @@ def process_data(df, col):
 	print(df)
 	
 	df = clean_partial_duplicates(df, col)
+	df.to_csv("afterpartial.csv", index=False)
 
 	print("\nclean_partial_duplicates---------------------------------------------------------------------------")
 	print(df)
 
-	df = sort_by_name(df, col)
+	# df = sort_by_name(df, col)
+	# df.to_csv("aftersortbyname.csv", index=False)
 
 	print("\nsort_by_name---------------------------------------------------------------------------")
 	print(df)
@@ -102,8 +105,11 @@ def clean_duplicates(df, col):
 	df['Options'] = df.duplicated(subset=[col["name"]]).astype(str)
 	df['Options'].replace("False", np.nan, inplace=True)
 
-	df["tmp"] = df[df.columns.values.tolist()].isna().sum(1)
-	df = df.sort_values(by="tmp").drop(columns="tmp")
+	df = weightedscore(df, col)
+	df = df.drop("Today Date", axis=1)
+	df = df.drop("Last Created", axis=1)
+	# df["tmp"] = df[df.columns.values.tolist()].isna().sum(1)
+	# df = df.sort_values(by="tmp").drop(columns="tmp")
 
 	df = (
 		df.groupby([col["name"]], group_keys=False)
