@@ -35,3 +35,18 @@ def put_last(df, col):
     df = df[[c for c in df if c not in cols_at_end]
             + [c for c in cols_at_end if c in df]]
     return (df)
+
+def containsLetterAndNumber(input):
+    has_letter = False
+    has_number = False
+    # has_char = False
+    for x in input:
+        if x.isalpha():
+            has_letter = True
+        elif x.isnumeric():
+            has_number = True
+        # elif x in ["@"]:
+        #     has_char = True
+        if has_letter and has_number:
+            return True
+    return False

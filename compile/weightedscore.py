@@ -4,7 +4,7 @@ import re
 from margin import margin
 from unique_gen import unique
 from weightage_adjustment import get_info
-from weighted_utils import cleaning, str_to_dec, diff_date, put_last
+from weighted_utils import cleaning, str_to_dec, diff_date, put_last, containsLetterAndNumber
 
 weight2 = 0.15  # Suspect creation date
 weight3 = 0.1   # Employee count
@@ -32,7 +32,7 @@ def contact_scores(row, name, col, cols):
         if not pd.isna(row[name]):
             row[name] = str(row[name])
             if ("-" in row[name] or "+" in row[name] or '"' in row[name] or re.search(r'\d', row[name])) and not pd.isna(row[col["contact_email"]]):
-                if len(row[name]) >= 8 and len(row[name]) <= 17:
+                if len(row[name]) >= 8 and len(row[name]) <= 17 and containsLetterAndNumber(row[name]) == False:
                     val = int(float(full[1]))
                     return (val)
                 else:
@@ -42,7 +42,7 @@ def contact_scores(row, name, col, cols):
                 val = int(float(phone[1]))
                 return (val)
             elif ("-" in row[name] or "+" in row[name] or '"' in row[name] or re.search(r'\d', row[name])) and pd.isna(row[col["contact_email"]]):
-                if len(row[name]) >= 8 and len(row[name]) <= 17:
+                if len(row[name]) >= 8 and len(row[name]) <= 17 and containsLetterAndNumber(row[name]) == False:
                     val = int(float(email[1]))
                     return (val)
                 else:
