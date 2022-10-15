@@ -26,7 +26,7 @@ def process_data(df, col):
 	print(df)
 	
 	df = clean_partial_duplicates(df, col)
-	df.to_csv("afterpartial.csv", index=False)
+	# df.to_csv("afterpartial.csv", index=False)
 
 	print("\nclean_partial_duplicates---------------------------------------------------------------------------")
 	print(df)

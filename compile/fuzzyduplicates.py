@@ -8,11 +8,8 @@ def main():
 	print(df)
 
 def clean_partial_duplicates(df, col):
-	df['real_id'] = find_partitions(
-		col,
-		df=df,
-		match_func=similar,
-	)
+	# First round fuzzy
+	df['real_id'] = find_partitions(col, 1, df=df, match_func=similar)
 
 	print("\nAssign id for partial_duplicates--------------------------------------------------")
 	print(df)
@@ -34,11 +31,17 @@ def clean_partial_duplicates(df, col):
 		.apply(lambda x: x.ffill().bfill())
 		.drop_duplicates("real_id")
 	)
-
 	df = df.drop(columns="real_id")
+
+	# Second round fuzzy
+	df['real_id'] = find_partitions(col, 2,	df=df, match_func=similar)
+	df[col["name"]] = df.groupby("real_id")[col["name"]].transform('first')
+	df = df.replace(r'^\s+$', np.nan, regex=True)
+	df = df.drop(columns="real_id")
+
 	return (df)
 
-def find_partitions(col, df, match_func, max_size=None, block_by=None):
+def find_partitions(col, option, df, match_func, max_size=None, block_by=None):
 	"""Recursive algorithm for finding duplicates in a DataFrame."""
 
 	# If block_by is provided, then we apply the algorithm to each block and
@@ -84,7 +87,7 @@ def find_partitions(col, df, match_func, max_size=None, block_by=None):
 			if get_record_index(r2) in partition or i == at:
 				continue
 
-			if match_func(r1, r2, df, col):
+			if match_func(r1, r2, df, col, option):
 				partition.add(get_record_index(r2))
 				indexes.append(i)
 				find_partition(at=i, partition=partition, indexes=indexes)
@@ -103,28 +106,49 @@ def find_partitions(col, df, match_func, max_size=None, block_by=None):
 		for idx in idxs
 	})
 
-def similar(one, two, df, col):
-	to_remove = [
-			col["unique_id"],
-			col["source_type"],
-			col["score"],
-			"Options"
-		]
+def similar(one, two, df, col, opt):
+	base_ratio = 93
+	if (opt == 1):
+		to_remove = [
+				col["unique_id"],
+				col["source_type"],
+				col["score"],
+				"Options"
+			]
+		base_ratio = 93
+	else:
+		to_remove = [
+				col["unique_id"],
+				col["source_type"],
+				col["score"],
+				"Options",
+				col["main_phone"],
+				col["contact_name"],
+				col["contact_email"],
+				col["contact_designation"],
+				col["contact_phone"]
+			]
+		base_ratio = 95
 	fields = exclude_field(df, to_remove)
 	ratio = 0
 	len = 0
+	name_weightage = 100
 	for field in fields:
 		if " " == one[field] and " " == two[field]:
 			continue
-		ratio += fuzz.ratio(one[field], two[field])
-		len += 1
+		if field == col["name"] and opt == 2:
+			ratio += (fuzz.ratio(one[field], two[field]) * name_weightage)
+			len += name_weightage
+		else:
+			ratio += fuzz.ratio(one[field], two[field])
+			len += 1
 	# ratio = ratio/len(fields)
 	if len == 0:
 		len = 1
 	ratio = ratio/len
-	if (ratio > 97) or one[col["name"]] == "ciena":
+	if (ratio > base_ratio) or one[col["name"]] == "ddd automotive":
 		print(f'{one[col["name"]]}, {two[col["name"]]} = {ratio}')
-	return (ratio > 97)
+	return (ratio > base_ratio)
 
 def exclude_field(df, columns):
 	fields = df.columns.values.tolist()
