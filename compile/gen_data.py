@@ -4,6 +4,7 @@ from processdata import process_data
 from output import output_data
 from weightedscore import weightedscore
 from unique_gen import unique
+from tkinter import messagebox
 
 def gen_data(sources, output):
     col = get_col_name()
@@ -14,6 +15,8 @@ def gen_data(sources, output):
     # df = unique(df, col)
     df = weightedscore(df, col)
     output_data([df_full], df, output)
+    messagebox.showinfo("Successful", "file has been generated")
+        
     # df.to_csv(output + ".csv", index=False)
 
 def get_col_name():
