@@ -6,8 +6,7 @@ from unique_gen import unique
 from weightage_adjustment import get_info
 from weighted_utils import cleaning, str_to_dec, diff_date, put_last, containsLetterAndNumber, checkemail
 
-weight2 = 0.15  # Suspect creation date
-weight3 = 0.1   # Employee count
+weight3 = 0.05   # Employee count
 weight4 = 0.1   # Total potential revenue
 
 def get_score(row, name, cols):
@@ -198,7 +197,8 @@ def weightedscore(df, col):
 def main():
     df = pd.read_csv(
         "/home/ssyazz/python/group/merge.csv")
-    df = unique(df)
+    #df = unique(df)
+    #col = get_col_name()
     sorted_scored = weightedscore(df)
     print(sorted_scored)
     sorted_scored.to_csv("/home/ssyazz/python/group/new.csv", index = False)
