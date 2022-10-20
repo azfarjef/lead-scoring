@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import re
 from datetime import date
 from decimal import Decimal
 from re import sub
@@ -50,3 +51,13 @@ def containsLetterAndNumber(input):
         if has_letter and has_number:
             return True
     return False
+
+def checkemail(email):
+    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    print(email)
+    if (re.fullmatch(regex, email)):
+        print("pass")
+        return (True)
+    else:
+        print("fail")
+        return (False)
