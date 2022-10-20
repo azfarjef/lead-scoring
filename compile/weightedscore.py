@@ -59,15 +59,19 @@ def contact_scores(row, name, col, cols):
             return (val)
     return (0)
 
-def last_created(index, row, df, col):
-    if row["Last Created"] < 10:
-        df.at[index, col["score"]] += weight2 * 0
-    elif row["Last Created"] >= 10 and row["Last Created"] < 31:
-        df.at[index, col["score"]] += weight2 * -20
-    elif row["Last Created"] >= 31 and row["Last Created"] < 90:
-        df.at[index, col["score"]] += weight2 * -50
-    else:
-        df.at[index, col["score"]] += weight2 * -100
+def last_created(index, row, df, col, cols):
+    if "Last Created" in df.columns:
+        if not pd.isna(row["Last Created"]):
+            if row["Last Created"] < cols[10][0]:
+                df.at[index, col["score"]] += cols['weightage'][1] * cols[10][1]
+            elif row["Last Created"] < cols[31][0]:
+                df.at[index, col["score"]] += cols['weightage'][1] * cols[31][1]
+            elif row["Last Created"] < cols[90][0]:
+                df.at[index, col["score"]] += cols['weightage'][1] * cols[90][1]
+            else:
+                df.at[index, col["score"]] += cols['weightage'][1] * cols[89][1]
+        else:
+            df.at[index, col["score"]] += cols['weightage'][1] * cols[89][1]
 
 def industry(index, row, df, col, cols):
     if col["industry"] in df.columns:
@@ -142,14 +146,9 @@ def competitor(index, row, df, col, cols):
         else:
             df.at[index, col["score"]] += cols["weightage"][1] * 0
 
-def negative_score(index, row, df, col, cols):
+def contact_score(index, row, df, col, cols):
     score = contact_scores(row, col["contact_phone"], col, cols)
     df.at[index, col["score"]] += cols["weightage"][1] * score
-    if "Last Created" in df.columns:
-        if not pd.isna(row["Last Created"]):
-            last_created(index, row, df, col)
-        else:
-            df.at[index, col["score"]] += weight2 * 0
 
 def scores(df, col):
     cols_industry = get_info("industry")
@@ -157,7 +156,8 @@ def scores(df, col):
     cols_source = get_info("lead_source")
     cols_designation = get_info("designation")
     cols_competitor = get_info("competitor")
-    cols_negative = get_info("negative_score")
+    cols_contact = get_info("contact_score")
+    cols_last_created = get_info("creation_date")
     for index, row in df.iterrows():
         if pd.isna(row[col["score"]]):
             df.at[index, col["score"]] = 0
@@ -176,7 +176,8 @@ def scores(df, col):
             source(index, row, df, col, cols_source)
             designation(index, row, df, col, cols_designation)
             competitor(index, row, df, col, cols_competitor)
-            negative_score(index, row, df, col, cols_negative)
+            contact_score(index, row, df, col, cols_contact)
+            last_created(index, row, df, col, cols_last_created)
 
 def weightedscore(df, col):
     df = cleaning(df)
