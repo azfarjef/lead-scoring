@@ -6,7 +6,6 @@ from unique_gen import unique
 from weightage_adjustment import get_info
 from weighted_utils import cleaning, str_to_dec, diff_date, put_last, containsLetterAndNumber, checkemail
 
-weight3 = 0.05   # Employee count
 weight4 = 0.1   # Total potential revenue
 
 def get_score(row, name, cols):
@@ -80,15 +79,19 @@ def industry(index, row, df, col, cols):
         else:
             df.at[index, col["score"]] += cols["weightage"][1] * 0
 
-def	employee(index, row, df, col):
-    if row[col["employee_count"]] > 249:
-        df.at[index, col["score"]] += weight3 * 100
-    elif row[col["employee_count"]] <= 249 and row[col["employee_count"]] > 49:
-        df.at[index, col["score"]] += weight3 * 50
-    elif row[col["employee_count"]] <= 49 and row[col["employee_count"]] > 9:
-        df.at[index, col["score"]] += weight3 * 20
-    else:
-        df.at[index, col["score"]] += weight3 * 0
+def	employee(index, row, df, col, cols):
+    if col["employee_count"] in df.columns:
+        if not pd.isna(row[col["employee_count"]]):
+            if row[col["employee_count"]] > cols[249][0]:
+                df.at[index, col["score"]] += cols['weightage'][1] * cols[249][1]
+            elif row[col["employee_count"]] < cols[10][0]:
+                df.at[index, col["score"]] += cols['weightage'][1] * cols[10][1]
+            elif row[col["employee_count"]] < cols[50][0]:
+                df.at[index, col["score"]] += cols['weightage'][1] * cols[50][1]
+            else:
+                df.at[index, col["score"]] += cols['weightage'][1] * cols[250][1]
+        else:
+            df.at[index, col["score"]] += cols['weightage'][1] * 0
 
 def revenue(index, row, df, col):
     if row[col["revenue"]] > 100000:
@@ -155,17 +158,14 @@ def scores(df, col):
     cols_source = get_info("lead_source")
     cols_designation = get_info("designation")
     cols_competitor = get_info("competitor")
+    cols_employee = get_info("employee_count")
     cols_contact = get_info("contact_score")
     cols_last_created = get_info("creation_date")
     for index, row in df.iterrows():
         if pd.isna(row[col["score"]]):
             df.at[index, col["score"]] = 0
             industry(index, row, df, col, cols_industry)
-            if col["employee_count"] in df.columns:
-                if not pd.isna(row[col["employee_count"]]):
-                    employee(index, row, df, col)
-                else:
-                    df.at[index, col["score"]] += weight3 * 0
+            employee(index, row, df, col, cols_employee)
             if col["revenue"] in df.columns:
                 if not pd.isna(row[col["revenue"]]):
                     revenue(index, row, df, col)
