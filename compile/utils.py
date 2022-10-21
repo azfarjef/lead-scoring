@@ -38,6 +38,8 @@ def find_and_merge(data):
                 error = f"{data[i + 1]} not found"
                 messagebox.showerror("Error", error)
             #merged_df = pd.merge(df1, df2, how="outer")
+            df1 = df1.rename(columns=lambda x: x.strip())
+            df2 = df2.rename(columns=lambda x: x.strip())
             frames = [df1, df2]
             merged_df = pd.concat(frames, join="outer")
             i += 1

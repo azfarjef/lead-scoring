@@ -23,6 +23,10 @@ def output_data(data, df, output):
 	column.insert(0, master_column)
 	# print(column)
 
+	# strip() whitespace
+	for col in column:
+		col[:] = [info.strip() for info in col]
+
 	sheetName = []
 	for co in column:
 		sheetName.append(co[0])

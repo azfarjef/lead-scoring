@@ -10,6 +10,7 @@ def gen_data(sources, output):
     col = get_col_name()
     df = merge_data(sources, output, col)
     # df.to_csv("aftermerge.csv", index=False)
+    df = df.rename(columns=lambda x: x.strip())
     print(df.columns)
     df, df_full = process_data(df, col)
     # df = unique(df, col)
@@ -53,7 +54,7 @@ def get_col_name():
     columns = []
     cf = pd.read_csv("data/columns.csv")
     for index, row in cf.iterrows():
-        columns.append(row.item())
+        columns.append(row.item().strip())
 
     for i, key in enumerate(col):
         col[key] = columns[i]

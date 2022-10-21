@@ -1,48 +1,10 @@
-import numpy as np
-import pandas as pd
 from fuzzywuzzy import fuzz
+import pandas as pd
+import numpy as np
+import time
+t1 = time.time()
 
-def main():
-	df = pd.read_excel('Sampledata_Comet_Allcolumns_updated28thAug.xlsx', sheet_name='fuzzy')
-	df = clean_partial_duplicates(df)
-	print(df)
-
-def clean_partial_duplicates(df, col):
-	# First round fuzzy
-	df['real_id'] = find_partitions(col, 1, df=df, match_func=similar)
-
-	print("\nAssign id for partial_duplicates--------------------------------------------------")
-	print(df)
-
-	to_remove = [
-			col["unique_id"],
-			col["source_type"],
-			col["score"],
-			"Options"
-		]
-	fields = exclude_field(df, to_remove)
-
-	# sort by most info
-	df = df.replace(r'^\s+$', np.nan, regex=True)
-	df["tmp"] = df[fields].isna().sum(1)
-	df = df.sort_values(by="tmp").drop(columns="tmp")
-
-	# merge partial duplicates' info
-	df = (
-		df.groupby("real_id", group_keys=False)
-		.apply(lambda x: x.ffill().bfill())
-		.drop_duplicates("real_id")
-	)
-	df = df.drop(columns="real_id")
-
-	# Second round fuzzy
-	df['real_id'] = find_partitions(col, 2,	df=df, match_func=similar)
-	# modify partial duplicates' company name to one same name
-	df[col["name"]] = df.groupby("real_id")[col["name"]].transform('first')
-	df = df.replace(r'^\s+$', np.nan, regex=True)
-	df = df.drop(columns="real_id")
-
-	return (df)
+damn_counter = 0
 
 def find_partitions(col, option, df, match_func, max_size=None, block_by=None):
 	"""Recursive algorithm for finding duplicates in a DataFrame."""
@@ -110,26 +72,23 @@ def find_partitions(col, option, df, match_func, max_size=None, block_by=None):
 	})
 
 def similar(one, two, df, col, opt):
+	global damn_counter
+	damn_counter += 1
 	base_ratio = 93
 	if (opt == 1):
 		to_remove = [
-				col["unique_id"],
-				col["source_type"],
-				col["score"],
-				"Options"
+				# "ROC NO",
+				# "website address",
+				# "CLUSTER",
+				# "YEAR"
 			]
 		base_ratio = 93
 	else:
 		to_remove = [
-				col["unique_id"],
-				col["source_type"],
-				col["score"],
-				"Options",
-				col["main_phone"],
-				col["contact_name"],
-				col["contact_email"],
-				col["contact_designation"],
-				col["contact_phone"]
+				# "ROC NO",
+				# "website address",
+				# "CLUSTER",
+				# "YEAR"
 			]
 		base_ratio = 95
 	fields = exclude_field(df, to_remove)
@@ -160,5 +119,33 @@ def exclude_field(df, columns):
 			fields.remove(field)
 	return (fields)
 
-if __name__ == "__main__":
-	main()
+col = {"name": "COMPANY NAME"}
+
+df = pd.read_excel('TechCompany.xlsx')
+
+to_remove = []
+fields = exclude_field(df, to_remove)
+
+df['real_id'] = find_partitions(col, 1, df=df, match_func=similar)
+df = df.replace(r'^\s+$', np.nan, regex=True)
+df["tmp"] = df[fields].isna().sum(1)
+df = df.sort_values(by="tmp").drop(columns="tmp")
+
+# merge partial duplicates' info
+df = (
+	df.groupby("real_id", group_keys=False)
+	.apply(lambda x: x.ffill().bfill())
+	.drop_duplicates("real_id")
+)
+df = df.drop(columns="real_id")
+
+# Second round fuzzy
+df['real_id'] = find_partitions(col, 2,	df=df, match_func=similar)
+# modify partial duplicates' company name to one same name
+df[col["name"]] = df.groupby("real_id")[col["name"]].transform('first')
+df = df.replace(r'^\s+$', np.nan, regex=True)
+df = df.drop(columns="real_id")
+
+t = time.time()-t1
+print("finished in:", t)
+print("no of comparisons", damn_counter)
