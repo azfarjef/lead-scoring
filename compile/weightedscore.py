@@ -6,8 +6,6 @@ from unique_gen import unique
 from weightage_adjustment import get_info
 from weighted_utils import cleaning, str_to_dec, diff_date, put_last, containsLetterAndNumber, checkemail
 
-weight4 = 0.1   # Total potential revenue
-
 def get_score(row, name, cols):
     other = dict((k, cols[k]) for k in ['Others']
         if k in cols)
@@ -69,7 +67,7 @@ def last_created(index, row, df, col, cols):
             else:
                 df.at[index, col["score"]] += cols['weightage'][1] * cols[89][1]
         else:
-            df.at[index, col["score"]] += cols['weightage'][1] * cols[89][1]
+            df.at[index, col["score"]] += cols['weightage'][1] * cols['Empty'][1]
 
 def industry(index, row, df, col, cols):
     if col["industry"] in df.columns:
@@ -77,7 +75,7 @@ def industry(index, row, df, col, cols):
             score = get_score(row, col["industry"], cols)
             df.at[index, col["score"]] += cols["weightage"][1] * score
         else:
-            df.at[index, col["score"]] += cols["weightage"][1] * 0
+            df.at[index, col["score"]] += cols["weightage"][1] * cols['Empty'][1]
 
 def	employee(index, row, df, col, cols):
     if col["employee_count"] in df.columns:
@@ -91,7 +89,7 @@ def	employee(index, row, df, col, cols):
             else:
                 df.at[index, col["score"]] += cols['weightage'][1] * cols[250][1]
         else:
-            df.at[index, col["score"]] += cols['weightage'][1] * 0
+            df.at[index, col["score"]] += cols['weightage'][1] * cols['Empty'][1]
 
 def revenue(index, row, df, col, cols):
     if col["revenue"] in df.columns:
@@ -107,7 +105,7 @@ def revenue(index, row, df, col, cols):
             else:
                 df.at[index, col["score"]] += cols['weightage'][1] * cols[1000000][1]
         else:
-            df.at[index, col["score"]] += cols['weightage'][1] * 0
+            df.at[index, col["score"]] += cols['weightage'][1] * cols['Empty'][1]
 
 def channel(index, row, df, col, cols):
     if col["physical_channel"] in df.columns:
@@ -115,7 +113,7 @@ def channel(index, row, df, col, cols):
             score = get_score(row, col["physical_channel"], cols)
             df.at[index, col["score"]] += cols["weightage"][1] * score
         else:
-            df.at[index, col["score"]] += cols["weightage"][1] * 0
+            df.at[index, col["score"]] += cols["weightage"][1] * cols['Empty'][1]
 
 def source(index, row, df, col, cols):
     if col["lead_source"] in df.columns:
@@ -123,7 +121,7 @@ def source(index, row, df, col, cols):
             score = get_score(row, col["lead_source"], cols)
             df.at[index, col["score"]] += cols["weightage"][1] * score
         else:
-            df.at[index, col["score"]] += cols["weightage"][1] * 0
+            df.at[index, col["score"]] += cols["weightage"][1] * cols['Empty'][1]
 
 def designation(index, row, df, col, cols):
     if col["contact_designation"] in df.columns:
@@ -131,7 +129,7 @@ def designation(index, row, df, col, cols):
             score = get_score(row, col["contact_designation"], cols)
             df.at[index, col["score"]] += cols["weightage"][1] * score
         else:
-            df.at[index, col["score"]] += cols["weightage"][1] * 0
+            df.at[index, col["score"]] += cols["weightage"][1] * cols['Empty'][1]
             
 def competitor(index, row, df, col, cols):
     if col["competitor"] in df.columns:
@@ -139,7 +137,7 @@ def competitor(index, row, df, col, cols):
             score = get_score(row, col["competitor"], cols)
             df.at[index, col["score"]] += cols["weightage"][1] * score
         else:
-            df.at[index, col["score"]] += cols["weightage"][1] * 0
+            df.at[index, col["score"]] += cols["weightage"][1] * cols['Empty'][1]
 
 def contact_score(index, row, df, col, cols):
     score = contact_scores(row, col["contact_phone"], col, cols)
