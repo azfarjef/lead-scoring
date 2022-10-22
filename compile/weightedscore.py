@@ -93,28 +93,21 @@ def	employee(index, row, df, col, cols):
         else:
             df.at[index, col["score"]] += cols['weightage'][1] * 0
 
-def revenue(index, row, df, col):
-    if row[col["revenue"]] > 100000:
-        df.at[index, col["score"]] += weight4 * 100
-    elif row [col["revenue"]] >= 10000  and row[col["revenue"]] < 100000:
-        df.at[index, col["score"]] += weight4 * 80
-    elif row[col["revenue"]] >= 1000 and row[col["revenue"]] < 10000:
-        df.at[index, col["score"]] += weight4 * 50
-    elif row[col["revenue"]] >= 100 and row[col["revenue"]] < 1000:
-        df.at[index, col["score"]] += weight4 * 20
-    else:
-        df.at[index, col["score"]] += weight4 * 10
-
-def channel(index, row, df, col, cols):
-    if col["physical_channel"] in df.columns:
-        # cols = get_channel()
-        if not pd.isna(row[col["physical_channel"]]):
-            score = get_score(row, col["physical_channel"], cols)
-            if (score == 0):
-                score = -50
-            df.at[index, col["score"]] += cols["weightage"][1] * score
+def revenue(index, row, df, col, cols):
+    if col["revenue"] in df.columns:
+        if not pd.isna(row[col["revenue"]]):
+            if row[col["revenue"]] < cols[100][0]:
+                df.at[index, col["score"]] += cols['weightage'][1] * cols[100][1]
+            elif row [col["revenue"]] < cols[1000][0]:
+                df.at[index, col["score"]] += cols['weightage'][1] * cols[1000][1]
+            elif row[col["revenue"]] < cols[10000][0]:
+                df.at[index, col["score"]] += cols['weightage'][1] * cols[10000][1]
+            elif row[col["revenue"]] < cols[100000][0]:
+                df.at[index, col["score"]] += cols['weightage'][1] * cols[100000][1]
+            else:
+                df.at[index, col["score"]] += cols['weightage'][1] * cols[1000000][1]
         else:
-            df.at[index, col["score"]] += cols["weightage"][1] * 0
+            df.at[index, col["score"]] += cols['weightage'][1] * 0
 
 def channel(index, row, df, col, cols):
     if col["physical_channel"] in df.columns:
@@ -159,6 +152,7 @@ def scores(df, col):
     cols_designation = get_info("designation")
     cols_competitor = get_info("competitor")
     cols_employee = get_info("employee_count")
+    cols_revenue = get_info("revenue")
     cols_contact = get_info("contact_score")
     cols_last_created = get_info("creation_date")
     for index, row in df.iterrows():
@@ -166,11 +160,7 @@ def scores(df, col):
             df.at[index, col["score"]] = 0
             industry(index, row, df, col, cols_industry)
             employee(index, row, df, col, cols_employee)
-            if col["revenue"] in df.columns:
-                if not pd.isna(row[col["revenue"]]):
-                    revenue(index, row, df, col)
-                else:
-                    df.at[index, col["score"]] += weight4 * 0
+            revenue(index, row, df, col, cols_revenue)
             channel(index, row, df, col, cols_channel)
             source(index, row, df, col, cols_source)
             designation(index, row, df, col, cols_designation)
@@ -190,7 +180,6 @@ def weightedscore(df, col):
     scores(df, col)
     margin(df, col)
     df = put_last(df, col)
-    print(df)
     sorted_df = df.sort_values(col["score"], ascending=False)
     return (sorted_df)
 
