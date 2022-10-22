@@ -11,6 +11,7 @@ def unique(df, col):
 
 def	unique_id(df, col):
     df[col["unique_id"]] = df.groupby([col["name"]]).ngroup()
+    df = df.sort_values(by = [col["unique_id"], col["name"]])
     return (df)
     
 def new_unique_id_small(df, col):
