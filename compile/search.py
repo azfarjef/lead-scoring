@@ -3,6 +3,7 @@ from tkinter import *
 from show_table import show_result
 import pandas as pd
 import sys
+from gen_data import get_col_name
 
 def read_columns(sheet):
     if sheet == "All":
@@ -21,19 +22,19 @@ def read_data(sheet):
         messagebox.showerror("Error", "master output not found")
     return df
 
-def find_and_merge_data(entry, df, ret_df):
+def find_and_merge_data(entry, df, ret_df, col):
     if entry.isdigit():
         print("hellooooooooooooooooooooooo")
         #entry = entry + ".0"
         for index, row in df.iterrows():
-            if entry == str(row["Unique Lead Assignment Number "]):
+            if entry == str(row[col["unique_id"]]):
                 temp = df.iloc[[index], :]
                 frames = [ret_df, temp]
                 ret_df = pd.concat(frames, join="outer")
                 #ret_df = pd.merge(ret_df, temp, how="outer")
     else:
         for index, row in df.iterrows():
-            if entry.lower() in row["Customer Name"].lower():
+            if entry.lower() in row[col["name"]].lower():
                 temp = df.iloc[[index], :]
                 frames = [ret_df, temp]
                 ret_df = pd.concat(frames, join="outer")
@@ -51,7 +52,8 @@ def search(entry, options_list):
     for index, row in cf.iterrows():
         columns.append(row.item().strip())
     """
-    ret_df = pd.DataFrame(columns=["Customer Name"])
+    col = get_col_name()
+    ret_df = pd.DataFrame(columns=[col["name"]])
     try:
         #df = read_data(options_list)
         df = pd.read_excel("output_backup.xlsx", sheet_name="Master data")
@@ -67,7 +69,7 @@ def search(entry, options_list):
         if column not in required_column:
             df = df.drop(column, axis=1)
     print(df.columns)
-    ret_df = find_and_merge_data(entry, df, ret_df) 
+    ret_df = find_and_merge_data(entry, df, ret_df, col) 
     if ret_df.empty == False:
         show_result(ret_df)
         ret_df.to_csv(entry + ".csv", index=False)
