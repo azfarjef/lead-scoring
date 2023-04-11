@@ -23,19 +23,19 @@ To get started with this project, you'll need to have Python and the required pa
 
 Clone the repository to your local machine.
 ```bash
-    git clone https://github.com/azfarjef/lead-scoring.git
-```
-Install the required packages
-```bash
-    pip install -r requirements.txt.
+git clone https://github.com/azfarjef/lead-scoring.git
 ```
 Go to compile directory
 ```bash
-    cd compile
+cd lead-scoring/compile/
 ```
-Run the main program by running the command
+Install the required packages
 ```bash
-    ./main.py.
+pip install -r requirements.txt
+```
+Run the main program
+```bash
+./main.py
 ```
 ## Usage
 
